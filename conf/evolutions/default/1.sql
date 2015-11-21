@@ -36,15 +36,6 @@ create table "passwordinfo"
   constraint fk_password_info_login_info foreign key ("loginInfoId") REFERENCES logininfo(id)
 );
 
-create table "oauth1info"
-(
-  "id" SERIAL NOT NULL PRIMARY KEY,
-  "token" TEXT NOT NULL,
-  "secret" TEXT NOT NULL,
-  "loginInfoId" BIGINT NOT NULL,
-  constraint fk_oauth1_info_login_info foreign key ("loginInfoId") REFERENCES logininfo(id)
-);
-
 create table "oauth2info"
 (
   "id" SERIAL NOT NULL PRIMARY KEY,
@@ -54,20 +45,6 @@ create table "oauth2info"
   "refreshtoken" TEXT,
   "loginInfoId" BIGINT NOT NULL,
   constraint fk_oauth2_info_login_info foreign key ("loginInfoId") REFERENCES logininfo(id)
-);
-
-create table "openidinfo"
-(
-  "id" TEXT NOT NULL PRIMARY KEY,
-  "loginInfoId" BIGINT NOT NULL,
-  constraint fk_openid_info_login_info foreign key ("loginInfoId") REFERENCES logininfo(id)
-);
-
-create table "openidattributes"
-(
-  "id" TEXT NOT NULL,
-  "key" TEXT NOT NULL,
-  "value" TEXT NOT NULL
 );
 
 
