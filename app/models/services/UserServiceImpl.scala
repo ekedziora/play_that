@@ -34,7 +34,12 @@ class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
    * @param user The user to save.
    * @return The saved user.
    */
-  def save(user: User) = userDAO.save(user)
+  def save(user: User) = {
+    userDAO.findDuplicatedUsername(user.username).flatMap {
+      case true => Future.failed(new Exception("Duplicated username"))
+      case false => userDAO.save(user)
+    }
+  }
 
   /**
    * Saves the social profile for a user.

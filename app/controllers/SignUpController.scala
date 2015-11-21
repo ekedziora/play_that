@@ -51,31 +51,33 @@ class SignUpController @Inject() (
           case Some(user) =>
             Future.successful(Redirect(routes.ApplicationController.signUp()).flashing("error" -> Messages("user.exists")))
           case None =>
-            userService.findDuplicatedUsername(Some(data.username)).flatMap {
-              case true => Future.successful(BadRequest(views.html.signUp(SignUpForm.form.fill(data))).flashing("error" -> "UNIQUE"))
-              case false => {
-                val authInfo = passwordHasher.hash(data.password)
-                val user = User(
-                  userID = UUID.randomUUID(),
-                  loginInfo = loginInfo,
-                  username = Option(data.username),
-                  firstName = None,
-                  lastName = None,
-                  email = Some(data.email),
-                  avatarURL = None
-                )
-                for {
-                  avatar <- avatarService.retrieveURL(data.email)
-                  user <- userService.save(user.copy(avatarURL = avatar))
-                  authInfo <- authInfoRepository.add(loginInfo, authInfo)
-                  authenticator <- env.authenticatorService.create(loginInfo)
-                  value <- env.authenticatorService.init(authenticator)
-                  result <- env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
-                } yield {
-                  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-                  env.eventBus.publish(LoginEvent(user, request, request2Messages))
-                  result
-                }
+            val authInfo = passwordHasher.hash(data.password)
+            val user = User(
+              userID = UUID.randomUUID(),
+              loginInfo = loginInfo,
+              username = Option(data.username),
+              firstName = None,
+              lastName = None,
+              email = Some(data.email),
+              avatarURL = None
+            )
+            (for {
+              avatar <- avatarService.retrieveURL(data.email)
+              user <- userService.save(user.copy(avatarURL = avatar))
+              authInfo <- authInfoRepository.add(loginInfo, authInfo)
+              authenticator <- env.authenticatorService.create(loginInfo)
+              value <- env.authenticatorService.init(authenticator)
+              result <- env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
+            } yield {
+                env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+                env.eventBus.publish(LoginEvent(user, request, request2Messages))
+                result
+            }).recoverWith { ex: Throwable =>
+              ex match {
+                case exc:
+                  Exception =>
+                    val form = SignUpForm.form.fill(data).withGlobalError(Messages("username.exists"))
+                    Future.successful(BadRequest(views.html.signUp(form)))
               }
             }
         }
