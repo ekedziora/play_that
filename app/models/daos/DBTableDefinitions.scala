@@ -51,6 +51,8 @@ trait DBTableDefinitions {
   class UserLoginInfos(tag: Tag) extends Table[DBUserLoginInfo](tag, "userlogininfo") {
     def userID = column[String]("userID")
     def loginInfoId = column[Long]("loginInfoId")
+    def loginInfoFk = foreignKey("fk_user_login_info_login_info", loginInfoId, slickLoginInfos)(_.id)
+    def userFk = foreignKey("fk_user_login_info_user_id", userID, slickUsers)(_.id)
     def * = (userID, loginInfoId) <> (DBUserLoginInfo.tupled, DBUserLoginInfo.unapply)
   }
 
@@ -66,6 +68,7 @@ trait DBTableDefinitions {
     def password = column[String]("password")
     def salt = column[Option[String]]("salt")
     def loginInfoId = column[Long]("loginInfoId")
+    def loginInfoFk = foreignKey("fk_password_info_login_info", loginInfoId, slickLoginInfos)(_.id)
     def * = (hasher, password, salt, loginInfoId) <> (DBPasswordInfo.tupled, DBPasswordInfo.unapply)
   }
 
@@ -81,6 +84,7 @@ trait DBTableDefinitions {
     def token = column[String]("token")
     def secret = column[String]("secret")
     def loginInfoId = column[Long]("loginInfoId")
+    def loginInfoFk = foreignKey("fk_oauth1_info_login_info", loginInfoId, slickLoginInfos)(_.id)
     def * = (id.?, token, secret, loginInfoId) <> (DBOAuth1Info.tupled, DBOAuth1Info.unapply)
   }
 
@@ -99,7 +103,8 @@ trait DBTableDefinitions {
     def tokenType = column[Option[String]]("tokentype")
     def expiresIn = column[Option[Int]]("expiresin")
     def refreshToken = column[Option[String]]("refreshtoken")
-    def loginInfoId = column[Long]("logininfoid")
+    def loginInfoId = column[Long]("loginInfoId")
+    def loginInfoFk = foreignKey("fk_oauth2_info_login_info", loginInfoId, slickLoginInfos)(_.id)
     def * = (id.?, accessToken, tokenType, expiresIn, refreshToken, loginInfoId) <> (DBOAuth2Info.tupled, DBOAuth2Info.unapply)
   }
 
@@ -110,7 +115,8 @@ trait DBTableDefinitions {
 
   class OpenIDInfos(tag: Tag) extends Table[DBOpenIDInfo](tag, "openidinfo") {
     def id = column[String]("id", O.PrimaryKey)
-    def loginInfoId = column[Long]("logininfoid")
+    def loginInfoId = column[Long]("loginInfoId")
+    def loginInfoFk = foreignKey("fk_openid_info_login_info", loginInfoId, slickLoginInfos)(_.id)
     def * = (id, loginInfoId) <> (DBOpenIDInfo.tupled, DBOpenIDInfo.unapply)
   }
 

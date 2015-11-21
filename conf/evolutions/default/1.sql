@@ -1,22 +1,83 @@
-# --- !Ups
+  # --- !Ups
 
-create table "user" ("userID" VARCHAR NOT NULL PRIMARY KEY,"firstName" VARCHAR,"lastName" VARCHAR,"fullName" VARCHAR,"email" VARCHAR,"avatarURL" VARCHAR);
-create table "logininfo" ("id" SERIAL NOT NULL PRIMARY KEY,"providerID" VARCHAR NOT NULL,"providerKey" VARCHAR NOT NULL);
-create table "userlogininfo" ("userID" VARCHAR NOT NULL,"loginInfoId" BIGINT NOT NULL);
-create table "passwordinfo" ("hasher" VARCHAR NOT NULL,"password" VARCHAR NOT NULL,"salt" VARCHAR,"loginInfoId" BIGINT NOT NULL);
-create table "oauth1info" ("id" SERIAL NOT NULL PRIMARY KEY,"token" VARCHAR NOT NULL,"secret" VARCHAR NOT NULL,"loginInfoId" BIGINT NOT NULL);
-create table "oauth2info" ("id" SERIAL NOT NULL PRIMARY KEY,"accesstoken" VARCHAR NOT NULL,"tokentype" VARCHAR,"expiresin" INTEGER,"refreshtoken" VARCHAR,"logininfoid" BIGINT NOT NULL);
-create table "openidinfo" ("id" VARCHAR NOT NULL PRIMARY KEY,"logininfoid" BIGINT NOT NULL);
-create table "openidattributes" ("id" VARCHAR NOT NULL,"key" VARCHAR NOT NULL,"value" VARCHAR NOT NULL);
+create table "user"
+(
+  "userID" TEXT NOT NULL PRIMARY KEY,
+  "username" TEXT,
+  "firstName" TEXT,
+  "lastName" TEXT,
+  "email" TEXT,
+  "avatarURL" TEXT,
+  constraint username_unique_index UNIQUE(username),
+  constraint email_unique_index UNIQUE(email)
+);
+
+create table "logininfo"
+(
+  "id" SERIAL NOT NULL PRIMARY KEY,
+  "providerID" TEXT NOT NULL,
+  "providerKey" TEXT NOT NULL
+);
+
+create table "userlogininfo"
+(
+  "userID" TEXT NOT NULL,
+  "loginInfoId" BIGINT NOT NULL,
+  constraint fk_user_login_info_login_info foreign key ("loginInfoId") references logininfo(id),
+  constraint fk_user_login_info_user_id foreign key ("userID") references "user"("userID")
+);
+
+create table "passwordinfo"
+(
+  "hasher" TEXT NOT NULL,
+  "password" TEXT NOT NULL,
+  "salt" TEXT,
+  "loginInfoId" BIGINT NOT NULL,
+  constraint fk_password_info_login_info foreign key ("loginInfoId") REFERENCES logininfo(id)
+);
+
+create table "oauth1info"
+(
+  "id" SERIAL NOT NULL PRIMARY KEY,
+  "token" TEXT NOT NULL,
+  "secret" TEXT NOT NULL,
+  "loginInfoId" BIGINT NOT NULL,
+  constraint fk_oauth1_info_login_info foreign key ("loginInfoId") REFERENCES logininfo(id)
+);
+
+create table "oauth2info"
+(
+  "id" SERIAL NOT NULL PRIMARY KEY,
+  "accesstoken" TEXT NOT NULL,
+  "tokentype" TEXT,
+  "expiresin" INTEGER,
+  "refreshtoken" TEXT,
+  "loginInfoId" BIGINT NOT NULL,
+  constraint fk_oauth2_info_login_info foreign key ("loginInfoId") REFERENCES logininfo(id)
+);
+
+create table "openidinfo"
+(
+  "id" TEXT NOT NULL PRIMARY KEY,
+  "loginInfoId" BIGINT NOT NULL,
+  constraint fk_openid_info_login_info foreign key ("loginInfoId") REFERENCES logininfo(id)
+);
+
+create table "openidattributes"
+(
+  "id" TEXT NOT NULL,
+  "key" TEXT NOT NULL,
+  "value" TEXT NOT NULL
+);
 
 
 # --- !Downs
 
-drop table "openidattributes";
-drop table "openidinfo";
-drop table "oauth2info";
-drop table "oauth1info";
-drop table "passwordinfo";
-drop table "userlogininfo";
-drop table "logininfo";
-drop table "user";
+drop table if exists "openidattributes";
+drop table if exists "openidinfo";
+drop table if exists "oauth2info";
+drop table if exists "oauth1info";
+drop table if exists "passwordinfo";
+drop table if exists "userlogininfo";
+drop table if exists "logininfo";
+drop table if exists "user";
