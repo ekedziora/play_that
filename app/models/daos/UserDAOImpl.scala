@@ -8,6 +8,8 @@ import models.User
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
+import scala.concurrent.Future
+
 /**
  * Give access to the user object using Slick
  */
@@ -59,6 +61,16 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
             user.avatarURL)
       }
     }
+  }
+
+  def findDuplicatedUsername(username: Option[String]): Future[Boolean] = {
+      val query = slickUsers.filter(_.username === username)
+      db.run(query.result.headOption).map { dbUserOption =>
+        dbUserOption match {
+          case Some(_) => true
+          case None => false
+        }
+      }
   }
 
   /**

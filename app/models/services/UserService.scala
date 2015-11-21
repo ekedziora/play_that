@@ -11,6 +11,8 @@ import scala.concurrent.Future
  */
 trait UserService extends IdentityService[User] {
 
+  def findDuplicatedUsername(username: Option[String]): Future[Boolean]
+
   /**
    * Saves a user.
    *

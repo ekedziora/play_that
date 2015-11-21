@@ -35,4 +35,6 @@ trait UserDAO {
    * @return The saved user.
    */
   def save(user: User): Future[User]
+
+  def findDuplicatedUsername(username: Option[String]): Future[Boolean]
 }

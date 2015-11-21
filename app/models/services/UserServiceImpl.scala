@@ -26,6 +26,8 @@ class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
    */
   def retrieve(loginInfo: LoginInfo): Future[Option[User]] = userDAO.find(loginInfo)
 
+  def findDuplicatedUsername(username: Option[String]) : Future[Boolean] = userDAO.findDuplicatedUsername(username)
+
   /**
    * Saves a user.
    *
