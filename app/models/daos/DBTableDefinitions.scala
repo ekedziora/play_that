@@ -11,21 +11,23 @@ trait DBTableDefinitions {
 
   case class DBUser (
     userID: String,
+    username: Option[String],
     firstName: Option[String],
     lastName: Option[String],
-    fullName: Option[String],
     email: Option[String],
     avatarURL: Option[String]
   )
 
   class Users(tag: Tag) extends Table[DBUser](tag, "user") {
     def id = column[String]("userID", O.PrimaryKey)
+    def username = column[Option[String]]("username")
     def firstName = column[Option[String]]("firstName")
     def lastName = column[Option[String]]("lastName")
-    def fullName = column[Option[String]]("fullName")
     def email = column[Option[String]]("email")
     def avatarURL = column[Option[String]]("avatarURL")
-    def * = (id, firstName, lastName, fullName, email, avatarURL) <> (DBUser.tupled, DBUser.unapply)
+    def uniqueUsername = index("username_unique_index", username, unique = true)
+    def uniqueEmail = index("email_unique_index", email, unique = true)
+    def * = (id, username, firstName, lastName, email, avatarURL) <> (DBUser.tupled, DBUser.unapply)
   }
 
   case class DBLoginInfo (
