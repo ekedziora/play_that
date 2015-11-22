@@ -8,6 +8,7 @@ import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
 import models.User
 import models.daos.UserDAO
 import play.api.libs.concurrent.Execution.Implicits._
+import utils.ValidationException
 
 import scala.concurrent.Future
 
@@ -36,8 +37,13 @@ class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
    */
   def save(user: User) = {
     userDAO.findDuplicatedUsername(user.username).flatMap {
-      case true => Future.failed(new Exception("Duplicated username"))
-      case false => userDAO.save(user)
+      case true => Future.failed(ValidationException.createWithValidationMessageKey("username.exists"))
+      case false => userDAO.find(user.loginInfo).flatMap { userOption =>
+        if (userOption.isDefined)
+          Future.failed(ValidationException.createWithValidationMessageKey("user.exists"))
+        else
+          userDAO.save(user)
+      }
     }
   }
 
