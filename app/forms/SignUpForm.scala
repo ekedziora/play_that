@@ -2,30 +2,24 @@ package forms
 
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.Constraints.pattern
 
 /**
  * The form which handles the sign up process.
  */
 object SignUpForm {
 
-  /**
-   * A play framework form.
-   */
+  /* Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet and 1 Number */
+  private val PasswordRegexp = """^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$""".r
+
   val form = Form(
     mapping(
       "username" -> nonEmptyText,
       "email" -> email,
-      "password" -> nonEmptyText
+      "password" -> nonEmptyText.verifying(pattern(PasswordRegexp, error = "password.policy.error"))
     )(Data.apply)(Data.unapply)
   )
 
-  /**
-   * The form data.
-   *
-   * @param username The name shown to other users.
-   * @param email The email of the user.
-   * @param password The password of the user.
-   */
   case class Data(
     username: String,
     email: String,
