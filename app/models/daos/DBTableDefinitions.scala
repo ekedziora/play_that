@@ -1,11 +1,14 @@
 package models.daos
 
+import java.time.LocalDate
+
 import com.mohiva.play.silhouette.api.LoginInfo
+import models.{Gender, User}
 import slick.driver.JdbcProfile
 import slick.lifted.ProvenShape.proveShapeOf
 
-trait DBTableDefinitions {
-  
+trait DBTableDefinitions extends CustomTypes {
+
   protected val driver: JdbcProfile
   import driver.api._
 
@@ -15,8 +18,14 @@ trait DBTableDefinitions {
     firstName: Option[String],
     lastName: Option[String],
     email: Option[String],
+    gender: Option[Gender],
+    birthDate: Option[LocalDate],
     avatarURL: Option[String]
-  )
+  ) {
+    def this(user: User) {
+      this(user.userID.toString, user.username, user.firstName, user.lastName, user.email, user.gender, user.birthDate, user.avatarURL)
+    }
+  }
 
   class Users(tag: Tag) extends Table[DBUser](tag, "user") {
     def id = column[String]("userID", O.PrimaryKey)
@@ -24,10 +33,12 @@ trait DBTableDefinitions {
     def firstName = column[Option[String]]("firstName")
     def lastName = column[Option[String]]("lastName")
     def email = column[Option[String]]("email")
+    def gender = column[Option[Gender]]("gender")
+    def birthDate = column[Option[LocalDate]]("birthDate")
     def avatarURL = column[Option[String]]("avatarURL")
     def uniqueUsername = index("username_unique_index", username, unique = true)
     def uniqueEmail = index("email_unique_index", email, unique = true)
-    def * = (id, username, firstName, lastName, email, avatarURL) <> (DBUser.tupled, DBUser.unapply)
+    def * = (id, username, firstName, lastName, email, gender, birthDate, avatarURL) <> (DBUser.tupled, DBUser.unapply)
   }
 
   case class DBLoginInfo (

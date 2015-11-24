@@ -53,8 +53,6 @@ class SignUpController @Inject() (
           userID = UUID.randomUUID(),
           loginInfo = loginInfo,
           username = Option(data.username),
-          firstName = None,
-          lastName = None,
           email = Some(data.email),
           avatarURL = None
         )

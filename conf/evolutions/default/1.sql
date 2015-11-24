@@ -7,6 +7,8 @@ create table "user"
   "firstName" TEXT,
   "lastName" TEXT,
   "email" TEXT,
+  "gender" VARCHAR(1),
+  "birthDate" DATE,
   "avatarURL" TEXT,
   constraint username_unique_index UNIQUE(username),
   constraint email_unique_index UNIQUE(email)

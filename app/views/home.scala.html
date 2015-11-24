@@ -28,6 +28,14 @@
                     <p class="col-md-6"><strong>@Messages("email"):</strong></p>
                     <p class="col-md-6">@user.email.getOrElse("")</p>
                 </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("gender"):</strong></p>
+                    <p class="col-md-6">@user.gender.map(genderOption => Messages(genderOption.messagesKey)).getOrElse("")</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("birthDate"):</strong></p>
+                    <p class="col-md-6">@user.birthDate.map(_.toString).getOrElse("")</p>
+                </div>
             </div>
         </div>
     </div>
