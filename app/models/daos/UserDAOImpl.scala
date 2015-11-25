@@ -4,6 +4,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.LoginInfo
+import forms.AccountDetailsEditForm.Data
 import models.User
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -17,12 +18,13 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   import driver.api._
 
-  /**
-   * Finds a user by its login info.
-   *
-   * @param loginInfo The login info of the user to find.
-   * @return The found user or None if no user for the given login info could be found.
-   */
+  override def updateUserAccount(accountData: Data): Future[Int] = {
+    val q = slickUsers.filter(_.id === accountData.userId.toString)
+      .map(x => (x.username, x.firstName, x.lastName, x.gender, x.birthDate))
+      .update((Option(accountData.username), accountData.firstName, accountData.lastName, accountData.gender, accountData.birthDate))
+    db.run(q)
+  }
+
   def find(loginInfo: LoginInfo) = {
     val userQuery = for {
       dbLoginInfo <- loginInfoQuery(loginInfo)
@@ -36,12 +38,6 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     }
   }
 
-  /**
-   * Finds a user by its user ID.
-   *
-   * @param userID The ID of the user to find.
-   * @return The found user or None if no user for the given ID could be found.
-   */
   def find(userID: UUID) = {
     val query = for {
       dbUser <- slickUsers.filter(_.id === userID.toString)
@@ -65,8 +61,9 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     }
   }
 
-  def findDuplicatedUsername(username: Option[String]): Future[Boolean] = {
-      val query = slickUsers.filter(_.username === username)
+  def findDuplicatedUsername(username: Option[String], exceptUserId: Option[UUID]): Future[Boolean] = {
+      val query = slickUsers.filter(_.username === username).filter(_.id =!= exceptUserId.get.toString)
+      exceptUserId.foreach(userId => query.filter(_.id =!= userId.toString))
       db.run(query.result.headOption).map { dbUserOption =>
         dbUserOption match {
           case Some(_) => true
@@ -75,12 +72,6 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
       }
   }
 
-  /**
-   * Saves a user.
-   *
-   * @param user The user to save.
-   * @return The saved user.
-   */
   def save(user: User) = {
     val dbUser = new DBUser(user)
     val dbLoginInfo = DBLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey)

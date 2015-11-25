@@ -1,0 +1,52 @@
+@(user: models.User)(implicit request: RequestHeader, messages: Messages)
+
+@main(Messages("account.details.title"), Some(user)) {
+    <div class="user col-md-6 col-md-offset-3">
+        <div class="row">
+            <hr class="col-md-12" />
+            <h4 class="col-md-8">@Messages("account.details.title")</h4>
+            <div class="col-md-4 text-right">
+                <img src="@user.avatarURL.getOrElse(routes.Assets.at("images/silhouette.png"))" height="40px" />
+            </div>
+            <hr class="col-md-12" />
+        </div>
+        <div class="row data">
+            @request.flash.get("info").map { msg =>
+                <div class="col-md-6 col-md-offset-3 alert alert-info">
+                    @msg
+                </div>
+            }
+            <div class="col-md-12">
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("username"):</strong></p>
+                    <p class="col-md-6">@user.username.getOrElse("")</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("first.name"):</strong></p>
+                    <p class="col-md-6">@user.firstName.getOrElse("")</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("last.name"):</strong></p>
+                    <p class="col-md-6">@user.lastName.getOrElse("")</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("email"):</strong></p>
+                    <p class="col-md-6">@user.email.getOrElse("")</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("gender"):</strong></p>
+                    <p class="col-md-6">@user.gender.map(genderOption => Messages(genderOption.messagesKey)).getOrElse("")</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("birthDate"):</strong></p>
+                    <p class="col-md-6">@user.birthDate.map(_.toString).getOrElse("")</p>
+                </div>
+            </div>
+            <hr class="col-md-12" />
+            <div class="row text-center">
+                <a class="btn btn-info" role="button" href="@routes.UserAccountController.editAccountDetails">@Messages("edit.account.details")</a>
+                <a class="btn btn-info" role="button" href="@routes.UserAccountController.changePassword">@Messages("change.password")</a>
+            </div>
+        </div>
+    </div>
+}

@@ -11,7 +11,7 @@ import slick.driver.PostgresDriver.api._
  */
 trait CustomTypes {
 
-  implicit def genderDbType = MappedColumnType.base[Gender, String](_.dbValue, Gender.valueOf)
+  implicit def genderDbType = MappedColumnType.base[Gender, String](_.dbValue, Gender.fromDbValue(_))
 
   implicit def localDateType = MappedColumnType.base[LocalDate, Date](Date.valueOf(_), _.toLocalDate)
 

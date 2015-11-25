@@ -3,6 +3,7 @@ package models.daos
 import java.util.UUID
 
 import com.mohiva.play.silhouette.api.LoginInfo
+import forms.AccountDetailsEditForm.Data
 import models.User
 
 import scala.concurrent.Future
@@ -11,6 +12,14 @@ import scala.concurrent.Future
  * Give access to the user object.
  */
 trait UserDAO {
+
+  /**
+   * Updates user account data
+   *
+   * @param accountData data to update
+   * @return Status of operation
+   */
+  def updateUserAccount(accountData: Data): Future[Int]
 
   /**
    * Finds a user by its login info.
@@ -36,5 +45,12 @@ trait UserDAO {
    */
   def save(user: User): Future[User]
 
-  def findDuplicatedUsername(username: Option[String]): Future[Boolean]
+  /**
+   * Checks if there is user with given username and optionally other id then exceptUserId
+   *
+   * @param username username to check
+   * @param exceptUserId optional id of user to exclude
+   * @return true if duplicated user was found, false otherwise
+   */
+  def findDuplicatedUsername(username: Option[String], exceptUserId: Option[UUID]): Future[Boolean]
 }

@@ -5,13 +5,53 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
+import forms.AccountDetailsEditForm
+import forms.AccountDetailsEditForm.Data
 import models.User
-import play.api.i18n.MessagesApi
+import models.services.UserService
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.concurrent.Execution.Implicits._
+import utils.ValidationException
+
+import scala.concurrent.Future
 
 class UserAccountController @Inject() (
+    userService: UserService,
     val messagesApi: MessagesApi,
     val env: Environment[User, CookieAuthenticator],
     socialProviderRegistry: SocialProviderRegistry)
   extends Silhouette[User, CookieAuthenticator] {
+
+  def showAccountDetails = SecuredAction.async { implicit request =>
+    Future.successful(Ok(views.html.accountDetails(request.identity)))
+  }
+
+  def editAccountDetails = SecuredAction.async { implicit request =>
+    val form = AccountDetailsEditForm.form.fill(new Data(request.identity))
+    Future.successful(Ok(views.html.accountDetailsEdit(form, request.identity)))
+  }
+
+  def saveAccountDetails = SecuredAction.async { implicit request =>
+    AccountDetailsEditForm.form.bindFromRequest.fold(
+      formWithErrors => Future.successful(BadRequest(views.html.accountDetailsEdit(formWithErrors, request.identity))),
+      data => {
+        userService.updateAccountDetails(data).map { status =>
+          Redirect(routes.UserAccountController.showAccountDetails).flashing("info" -> Messages("account.details.updated"))
+        }.recoverWith {
+          PartialFunction((ex: Throwable) =>
+            ex match {
+              case ve: ValidationException =>
+                val form = AccountDetailsEditForm.form.fill(data).withGlobalError(ve.getMessageForView)
+                Future.successful(BadRequest(views.html.accountDetailsEdit(form, request.identity)))
+            }
+          )
+        }
+      }
+    )
+  }
+
+  def changePassword = SecuredAction.async { implicit request =>
+    Future.successful(Ok(views.html.accountDetails(request.identity)))
+  }
 
 }

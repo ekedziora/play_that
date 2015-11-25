@@ -5,6 +5,7 @@ import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
+import forms.AccountDetailsEditForm.Data
 import models.User
 import models.daos.UserDAO
 import play.api.libs.concurrent.Execution.Implicits._
@@ -19,24 +20,19 @@ import scala.concurrent.Future
  */
 class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
 
-  /**
-   * Retrieves a user that matches the specified login info.
-   *
-   * @param loginInfo The login info to retrieve a user.
-   * @return The retrieved user or None if no user could be retrieved for the given login info.
-   */
-  def retrieve(loginInfo: LoginInfo): Future[Option[User]] = userDAO.find(loginInfo)
+  override def retrieve(loginInfo: LoginInfo): Future[Option[User]] = userDAO.find(loginInfo)
 
-  def findDuplicatedUsername(username: Option[String]) : Future[Boolean] = userDAO.findDuplicatedUsername(username)
+  override def updateAccountDetails(accountData: Data): Future[Int] = {
+    userDAO.findDuplicatedUsername(Option(accountData.username), Some(accountData.userId)).flatMap {
+      case true => Future.failed(ValidationException.createWithValidationMessageKey("username.exists"))
+      case false => userDAO.updateUserAccount(accountData)
+    }
+  }
 
-  /**
-   * Saves a user.
-   *
-   * @param user The user to save.
-   * @return The saved user.
-   */
-  def save(user: User) = {
-    userDAO.findDuplicatedUsername(user.username).flatMap {
+  override def findDuplicatedUsername(username: Option[String]) : Future[Boolean] = userDAO.findDuplicatedUsername(username, None)
+
+  override def save(user: User) = {
+    userDAO.findDuplicatedUsername(user.username, None).flatMap {
       case true => Future.failed(ValidationException.createWithValidationMessageKey("username.exists"))
       case false => userDAO.find(user.loginInfo).flatMap { userOption =>
         if (userOption.isDefined)
@@ -47,15 +43,7 @@ class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
     }
   }
 
-  /**
-   * Saves the social profile for a user.
-   *
-   * If a user exists for this profile then update the user, otherwise create a new user with the given profile.
-   *
-   * @param profile The social profile to save.
-   * @return The user for whom the profile was saved.
-   */
-  def save(profile: CommonSocialProfile) = {
+  override def save(profile: CommonSocialProfile) = {
     userDAO.find(profile.loginInfo).flatMap {
       case Some(user) => // Update user with profile
         userDAO.save(user.copy(

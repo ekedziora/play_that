@@ -2,6 +2,7 @@ package models.services
 
 import com.mohiva.play.silhouette.api.services.IdentityService
 import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
+import forms.AccountDetailsEditForm
 import models.User
 
 import scala.concurrent.Future
@@ -11,6 +12,20 @@ import scala.concurrent.Future
  */
 trait UserService extends IdentityService[User] {
 
+  /**
+   * Updates user account data
+   *
+   * @param accountData user account data to update
+   * @return status of operation
+   */
+  def updateAccountDetails(accountData: AccountDetailsEditForm.Data) : Future[Int]
+
+  /**
+   * Checks if there exists user with given username
+   *
+   * @param username username to check
+   * @return true if user with username exists, false otherwise
+   */
   def findDuplicatedUsername(username: Option[String]): Future[Boolean]
 
   /**

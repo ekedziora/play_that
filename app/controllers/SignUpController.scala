@@ -72,7 +72,7 @@ class SignUpController @Inject() (
           ex match {
             case ve: ValidationException =>
               val form = SignUpForm.form.fill(data).withGlobalError(ve.getMessageForView)
-                Future.successful(BadRequest(views.html.signUp(form)))
+              Future.successful(BadRequest(views.html.signUp(form)))
           }
         }
       }
