@@ -12,6 +12,7 @@ password.policy.error = Password must be at least 8 characters long, contain at 
 
 home.title = Play that
 account.details.title = Account details
+account.details.edit.title = Edit account details
 sign.up.title = Play that - Sign Up
 sign.in.title = Play that - Sign In
 

@@ -92,3 +92,8 @@ a {
 .btn-lg {
     font-size: 18px;
 }
+
+.form-group.required .control-label:after {
+    content:"*";
+    color:red;
+}

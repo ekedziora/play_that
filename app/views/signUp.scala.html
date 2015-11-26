@@ -19,9 +19,9 @@
         <legend>@Messages("sign.up.account")</legend>
         @helper.form(action = routes.SignUpController.signUp()) {
             @helper.CSRF.formField
-            @b3.text(signInForm("username"), '_hiddenLabel -> Messages("username"), 'placeholder -> Messages("username"), 'class -> "form-control input-lg")
-            @b3.text(signInForm("email"), '_hiddenLabel -> Messages("email"), 'placeholder -> Messages("email"), 'class -> "form-control input-lg")
-            @b3.password(signInForm("password"), '_hiddenLabel -> Messages("password"), 'placeholder -> Messages("password"), 'class -> "form-control input-lg")
+            @b3.text(signInForm("username"), 'placeholder -> Messages("username"), 'class -> "form-control input-lg")
+            @b3.text(signInForm("email"), 'placeholder -> Messages("email"), 'class -> "form-control input-lg")
+            @b3.password(signInForm("password"), 'placeholder -> Messages("password"), 'class -> "form-control input-lg")
             <div class="form-group">
                 <div>
                     <button id="submit" type="submit" value="submit" class="btn btn-lg btn-primary btn-block">@Messages("sign.up")</button>
