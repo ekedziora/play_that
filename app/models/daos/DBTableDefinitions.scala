@@ -1,6 +1,7 @@
 package models.daos
 
 import java.time.LocalDate
+import java.util.UUID
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import models.{Gender, User}
@@ -13,7 +14,7 @@ trait DBTableDefinitions extends CustomTypes {
   import driver.api._
 
   case class DBUser (
-    userID: String,
+    userID: UUID,
     username: Option[String],
     firstName: Option[String],
     lastName: Option[String],
@@ -23,12 +24,12 @@ trait DBTableDefinitions extends CustomTypes {
     avatarURL: Option[String]
   ) {
     def this(user: User) {
-      this(user.userID.toString, user.username, user.firstName, user.lastName, user.email, user.gender, user.birthDate, user.avatarURL)
+      this(user.userID, user.username, user.firstName, user.lastName, user.email, user.gender, user.birthDate, user.avatarURL)
     }
   }
 
   class Users(tag: Tag) extends Table[DBUser](tag, "user") {
-    def id = column[String]("userID", O.PrimaryKey)
+    def id = column[UUID]("userID", O.PrimaryKey)
     def username = column[Option[String]]("username")
     def firstName = column[Option[String]]("firstName")
     def lastName = column[Option[String]]("lastName")
@@ -55,12 +56,12 @@ trait DBTableDefinitions extends CustomTypes {
   }
 
   case class DBUserLoginInfo (
-    userID: String,
+    userID: UUID,
     loginInfoId: Long
   )
 
   class UserLoginInfos(tag: Tag) extends Table[DBUserLoginInfo](tag, "userlogininfo") {
-    def userID = column[String]("userID")
+    def userID = column[UUID]("userID")
     def loginInfoId = column[Long]("loginInfoId")
     def loginInfoFk = foreignKey("fk_user_login_info_login_info", loginInfoId, slickLoginInfos)(_.id)
     def userFk = foreignKey("fk_user_login_info_user_id", userID, slickUsers)(_.id)

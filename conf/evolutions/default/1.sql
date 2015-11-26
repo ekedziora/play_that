@@ -2,7 +2,7 @@
 
 create table "user"
 (
-  "userID" TEXT NOT NULL PRIMARY KEY,
+  "userID" UUID NOT NULL PRIMARY KEY,
   "username" TEXT,
   "firstName" TEXT,
   "lastName" TEXT,
@@ -23,7 +23,7 @@ create table "logininfo"
 
 create table "userlogininfo"
 (
-  "userID" TEXT NOT NULL,
+  "userID" UUID NOT NULL,
   "loginInfoId" BIGINT NOT NULL,
   constraint fk_user_login_info_login_info foreign key ("loginInfoId") references logininfo(id),
   constraint fk_user_login_info_user_id foreign key ("userID") references "user"("userID")

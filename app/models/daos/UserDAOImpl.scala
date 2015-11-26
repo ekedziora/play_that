@@ -19,7 +19,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   import driver.api._
 
   override def updateUserAccount(accountData: Data): Future[Int] = {
-    val q = slickUsers.filter(_.id === accountData.userId.toString)
+    val q = slickUsers.filter(_.id === accountData.userId)
       .map(x => (x.username, x.firstName, x.lastName, x.gender, x.birthDate))
       .update((Option(accountData.username), accountData.firstName, accountData.lastName, accountData.gender, accountData.birthDate))
     db.run(q)
@@ -33,14 +33,14 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     } yield dbUser
     db.run(userQuery.result.headOption).map { dbUserOption =>
       dbUserOption.map { user =>
-        User(UUID.fromString(user.userID), loginInfo, user.username, user.firstName, user.lastName, user.email, user.gender, user.birthDate, user.avatarURL)
+        User(user.userID, loginInfo, user.username, user.firstName, user.lastName, user.email, user.gender, user.birthDate, user.avatarURL)
       }
     }
   }
 
   def find(userID: UUID) = {
     val query = for {
-      dbUser <- slickUsers.filter(_.id === userID.toString)
+      dbUser <- slickUsers.filter(_.id === userID)
       dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)
       dbLoginInfo <- slickLoginInfos.filter(_.id === dbUserLoginInfo.loginInfoId)
     } yield (dbUser, dbLoginInfo)
@@ -48,7 +48,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
       resultOption.map {
         case (user, loginInfo) =>
           User(
-            UUID.fromString(user.userID),
+            user.userID,
             LoginInfo(loginInfo.providerID, loginInfo.providerKey),
             user.username,
             user.firstName,
@@ -62,8 +62,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   }
 
   def findDuplicatedUsername(username: Option[String], exceptUserId: Option[UUID]): Future[Boolean] = {
-      val query = slickUsers.filter(_.username === username).filter(_.id =!= exceptUserId.get.toString)
-      exceptUserId.foreach(userId => query.filter(_.id =!= userId.toString))
+      val query = slickUsers.filter(_.username === username).filter( users => exceptUserId.map{users.id =!= _}.getOrElse(true: Rep[Boolean]) )
       db.run(query.result.headOption).map { dbUserOption =>
         dbUserOption match {
           case Some(_) => true
