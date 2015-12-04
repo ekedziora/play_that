@@ -14,6 +14,17 @@ import scala.concurrent.Future
 trait UserDAO {
 
   /**
+    * Finds login info by provided user id and provider id
+    *
+    * @param userId user id
+    * @param providerId auth provider id
+    * @return founded login info
+    *
+    * @throws IllegalArgumentException if login info was not found
+    */
+  def findLoginInfoByUserIdAndProviderId(userId: UUID, providerId: String): Future[LoginInfo]
+
+  /**
    * Updates user account data
    *
    * @param accountData data to update

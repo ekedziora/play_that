@@ -4,6 +4,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 import com.mohiva.play.silhouette.api.LoginInfo
+import com.mohiva.play.silhouette.api.util.PasswordInfo
 import models.{Gender, User}
 import slick.driver.JdbcProfile
 import slick.lifted.ProvenShape.proveShapeOf
@@ -73,7 +74,11 @@ trait DBTableDefinitions extends CustomTypes {
     password: String,
     salt: Option[String],
     loginInfoId: Long
-  )
+  ) {
+    def this(passwordInfo: PasswordInfo, loginInfoId: Long) {
+      this(passwordInfo.hasher, passwordInfo.password, passwordInfo.salt, loginInfoId)
+    }
+  }
 
   class PasswordInfos(tag: Tag) extends Table[DBPasswordInfo](tag, "passwordinfo") {
     def hasher = column[String]("hasher")

@@ -18,6 +18,21 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   import driver.api._
 
+  override def findLoginInfoByUserIdAndProviderId(userId: UUID, providerId: String): Future[LoginInfo] = {
+    val query = for {
+      dbUserLoginInfo <- slickUserLoginInfos if dbUserLoginInfo.userID === userId
+      dbLoginInfo <- slickLoginInfos if dbLoginInfo.id === dbUserLoginInfo.loginInfoId && dbLoginInfo.providerID === providerId
+    } yield dbLoginInfo
+
+    db.run(query.result.headOption).map { optionDbLoginInfo =>
+      optionDbLoginInfo.map { dbLoginInfo =>
+        LoginInfo(dbLoginInfo.providerID, dbLoginInfo.providerKey)
+      }.getOrElse {
+        throw new IllegalArgumentException(s"No login info found for user $userId and provider $providerId")
+      }
+    }
+  }
+
   override def updateUserAccount(accountData: Data): Future[Int] = {
     val q = slickUsers.filter(_.id === accountData.userId)
       .map(x => (x.username, x.firstName, x.lastName, x.gender, x.birthDate))

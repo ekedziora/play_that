@@ -1,8 +1,9 @@
 package models.services
 
+import com.mohiva.play.silhouette.api.AuthInfo
 import com.mohiva.play.silhouette.api.services.IdentityService
 import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
-import forms.AccountDetailsEditForm
+import forms.{AccountDetailsEditForm, ChangePasswordForm}
 import models.User
 
 import scala.concurrent.Future
@@ -11,6 +12,14 @@ import scala.concurrent.Future
  * Handles actions to users.
  */
 trait UserService extends IdentityService[User] {
+
+  /**
+   * Changes user password
+   *
+   * @param data change password data
+   * @return new password info
+   */
+  def changePassword(data: ChangePasswordForm.Data): Future[AuthInfo]
 
   /**
    * Updates user account data

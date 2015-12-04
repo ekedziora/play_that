@@ -13,7 +13,8 @@ POST        /signUp                          controllers.SignUpController.signUp
 GET         /accountDetails                  controllers.UserAccountController.showAccountDetails
 GET         /accountDetails/edit             controllers.UserAccountController.editAccountDetails
 POST        /accountDetails/edit             controllers.UserAccountController.saveAccountDetails
-GET         /accountDetails/changePassword   controllers.UserAccountController.changePassword
+GET         /accountDetails/changePassword   controllers.UserAccountController.showChangePasswordPage
+POST        /accountDetails/changePassword   controllers.UserAccountController.changePassword
 
 
 # Map static resources from the /public folder to the /assets URL path

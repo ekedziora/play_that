@@ -2,6 +2,7 @@ package forms.constraints
 
 import java.time.LocalDate
 
+import forms.ChangePasswordForm
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 object CustomFormConstraints {
@@ -14,6 +15,14 @@ object CustomFormConstraints {
           else
             Valid
       } getOrElse Valid
+  )
+
+  val SamePasswordAndRepeat: Constraint[ChangePasswordForm.Data] = Constraint("same.password.repeat")(
+    data =>
+      if (data.newPassword == data.newPasswordRepeat)
+        Valid
+      else
+        Invalid("password.repeat.not.match")
   )
 
 }

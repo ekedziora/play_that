@@ -5,8 +5,8 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
-import forms.AccountDetailsEditForm
 import forms.AccountDetailsEditForm.Data
+import forms.{AccountDetailsEditForm, ChangePasswordForm}
 import models.User
 import models.services.UserService
 import play.api.i18n.{Messages, MessagesApi}
@@ -38,20 +38,35 @@ class UserAccountController @Inject() (
         userService.updateAccountDetails(data).map { status =>
           Redirect(routes.UserAccountController.showAccountDetails).flashing("info" -> Messages("account.details.updated"))
         }.recoverWith {
-          PartialFunction((ex: Throwable) =>
-            ex match {
-              case ve: ValidationException =>
-                val form = AccountDetailsEditForm.form.fill(data).withGlobalError(ve.getMessageForView)
-                Future.successful(BadRequest(views.html.accountDetailsEdit(form, request.identity)))
-            }
-          )
+          PartialFunction {
+            case ve: ValidationException =>
+              val form = AccountDetailsEditForm.form.fill(data).withGlobalError(ve.getMessageForView)
+              Future.successful(BadRequest(views.html.accountDetailsEdit(form, request.identity)))
+          }
         }
       }
     )
   }
 
+  def showChangePasswordPage = SecuredAction.async { implicit request =>
+    val form = ChangePasswordForm.form.fill(new ChangePasswordForm.Data(request.identity))
+    Future.successful(Ok(views.html.changePassword(form, request.identity)))
+  }
+
   def changePassword = SecuredAction.async { implicit request =>
-    Future.successful(Ok(views.html.accountDetails(request.identity)))
+    ChangePasswordForm.form.bindFromRequest.fold(
+      formWithErrors => Future.successful(BadRequest(views.html.changePassword(formWithErrors, request.identity))),
+      data =>
+        userService.changePassword(data).map { status =>
+          Redirect(routes.UserAccountController.showAccountDetails).flashing("info" -> Messages("password.changed"))
+        }.recoverWith {
+          PartialFunction {
+            case ve: ValidationException =>
+              val form = ChangePasswordForm.form.fill(data).withGlobalError(ve.getMessageForView)
+              Future.successful(BadRequest(views.html.changePassword(form, request.identity)))
+          }
+        }
+    )
   }
 
 }

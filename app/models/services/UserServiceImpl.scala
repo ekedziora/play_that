@@ -3,9 +3,12 @@ package models.services
 import java.util.UUID
 import javax.inject.Inject
 
-import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
+import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
+import com.mohiva.play.silhouette.api.util.{PasswordHasher, PasswordInfo}
+import com.mohiva.play.silhouette.api.{AuthInfo, LoginInfo}
+import com.mohiva.play.silhouette.impl.providers.{CommonSocialProfile, CredentialsProvider}
 import forms.AccountDetailsEditForm.Data
+import forms.ChangePasswordForm
 import models.User
 import models.daos.UserDAO
 import play.api.libs.concurrent.Execution.Implicits._
@@ -18,9 +21,22 @@ import scala.concurrent.Future
  *
  * @param userDAO The user DAO implementation.
  */
-class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
+class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHasher, authInfoRepository: AuthInfoRepository)
+  extends UserService {
 
   override def retrieve(loginInfo: LoginInfo): Future[Option[User]] = userDAO.find(loginInfo)
+
+  override def changePassword(data: ChangePasswordForm.Data): Future[AuthInfo] = {
+    userDAO.findLoginInfoByUserIdAndProviderId(data.userId, CredentialsProvider.ID).flatMap { loginInfo =>
+      authInfoRepository.find[PasswordInfo](loginInfo).flatMap { optionPasswordInfo =>
+        if (optionPasswordInfo.isDefined && passwordHasher.matches(optionPasswordInfo.get, data.oldPassword)) {
+          authInfoRepository.update(loginInfo, passwordHasher.hash(data.newPassword))
+        } else {
+          Future.failed(ValidationException.createWithValidationMessageKey("password.incorrect"))
+        }
+      }
+    }
+  }
 
   override def updateAccountDetails(accountData: Data): Future[Int] = {
     userDAO.findDuplicatedUsername(Option(accountData.username), Some(accountData.userId)).flatMap {
