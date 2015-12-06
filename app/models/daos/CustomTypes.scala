@@ -11,10 +11,10 @@ import slick.driver.PostgresDriver.api._
  */
 trait CustomTypes {
 
-  implicit def genderDbType = MappedColumnType.base[Gender, String](_.dbValue, Gender.fromDbValue(_))
+  implicit def genderDbType = MappedColumnType.base[Gender, String](_.dbValue, Gender.fromDbValue)
 
-  implicit def localDateType = MappedColumnType.base[LocalDate, Date](Date.valueOf(_), _.toLocalDate)
+  implicit def localDateType = MappedColumnType.base[LocalDate, Date](Date.valueOf, _.toLocalDate)
 
-  implicit def localDateTimeType = MappedColumnType.base[LocalDateTime, Timestamp](Timestamp.valueOf(_), _.toLocalDateTime)
+  implicit def localDateTimeType = MappedColumnType.base[LocalDateTime, Timestamp](Timestamp.valueOf, _.toLocalDateTime)
 
 }

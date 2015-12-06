@@ -25,7 +25,7 @@
                     @b3.text(accountDetailsForm("lastName"), '_label -> Messages("last.name"))
                     @b3.radio(accountDetailsForm("gender"), Gender.getOptions map Function.tupled((value, labelMessageKey) => (value, Messages(labelMessageKey))),
                         '_label -> Messages("gender"))
-                    @b3.date(accountDetailsForm("birthDate"), '_label -> Messages("birthDate"))
+                    @b3.date(accountDetailsForm("birthDate"), '_label -> Messages("birthDate"), 'placeholder -> Messages("date.format"))
                     @b3.submit('class -> "btn btn-lg btn-primary btn-block"){ @Messages("save") }
                 }
             </div>

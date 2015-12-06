@@ -15,7 +15,7 @@ import com.mohiva.play.silhouette.impl.services._
 import com.mohiva.play.silhouette.impl.util._
 import models.User
 import models.daos._
-import models.services.{UserService, UserServiceImpl}
+import models.services.{EventService, EventServiceImpl, UserService, UserServiceImpl}
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.codingwell.scalaguice.ScalaModule
@@ -33,7 +33,10 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    */
   def configure() {
     bind[UserService].to[UserServiceImpl]
+    bind[EventService].to[EventServiceImpl]
     bind[UserDAO].to[UserDAOImpl]
+    bind[DisciplineDao].to[DisciplineDaoImpl]
+    bind[EventDao].to[EventDaoImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]
     bind[CacheLayer].to[PlayCacheLayer]

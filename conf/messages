@@ -2,7 +2,9 @@ error.email = Valid email required
 error.required = This field is required
 error.gender.format = Invalid choice for gender
 error.date.format = Date should be in YYYY-MM-DD format
+error.date.time.format = Date and time should be in YYYY-MM-DD HH:MM format
 error.date.not.past = Date should be in past
+error.date.time.not.future = Date and time should be in future
 invalid.credentials = Invalid credentials
 access.denied = Access denied
 user.exists = There already exists a user with this email
@@ -17,6 +19,7 @@ home.title = Play that
 account.details.title = Account details
 account.details.edit.title = Edit account details
 change.password.title = Change password
+event.add.title = Add event
 sign.up.title = Play that - Sign Up
 sign.in.title = Play that - Sign In
 
@@ -46,6 +49,18 @@ already.a.member = Already a member?
 not.a.member = Not a member?
 password.new = New password
 password.new.repeat = Repeat password
+title = Title
+description = Description
+date.time = Date and time
+max.participants = Max participants number
+discipline = Discipline
+
+date.format = YYYY-MM-DD
+date.time.format = YYYY-MM-DD HH:MM
+
+discipline.basketball = Basketball
+discipline.football = Football
+discipline.volleyball = Volleyball
 
 account.details.updated = Account details updated successfully
 edit.account.details = Edit account details

@@ -10,19 +10,21 @@ resolvers := ("Atlassian Releases" at "https://maven.atlassian.com/public/") +: 
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
-  "com.mohiva" %% "play-silhouette" % "3.0.2",
+  "com.mohiva" %% "play-silhouette" % "3.0.4",
+  "com.mohiva" %% "play-silhouette-testkit" % "3.0.4" % "test",
   "org.webjars" %% "webjars-play" % "2.4.0-1",
   "net.codingwell" %% "scala-guice" % "4.0.0",
   "net.ceedubs" %% "ficus" % "1.1.2",
-  "com.adrianhurt" %% "play-bootstrap3" % "0.4.4-P24",
-  "com.mohiva" %% "play-silhouette-testkit" % "3.0.2" % "test",
+  "com.adrianhurt" %% "play-bootstrap" % "1.0-P24-B3-SNAPSHOT",
   "org.scala-lang" % "scala-reflect" % "2.11",
   specs2 % Test,
-  "com.typesafe.play" %% "play-slick" % "1.0.1",
-  "com.typesafe.play" %% "play-slick-evolutions" % "1.0.1",
+  "com.typesafe.play" %% "play-slick" % "1.1.1",
+  "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
   "org.postgresql" % "postgresql" % "9.4-1204-jdbc41",
   cache,
   evolutions,

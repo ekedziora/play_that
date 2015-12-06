@@ -1,6 +1,6 @@
 package models.daos
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
 
 import com.mohiva.play.silhouette.api.LoginInfo
@@ -109,12 +109,52 @@ trait DBTableDefinitions extends CustomTypes {
     def * = (id.?, accessToken, tokenType, expiresIn, refreshToken, loginInfoId) <> (DBOAuth2Info.tupled, DBOAuth2Info.unapply)
   }
 
+  case class DbSportDiscipline(id: Long, name: String)
+
+  class SportDisciplinesTable(tag: Tag) extends Table[DbSportDiscipline](tag, "sport_disciplines") {
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("name")
+    def nameKey = column[String]("name_key")
+    def uniqueName = index("unique_name", name, unique = true)
+    def uniqueNameKey = index("unique_name_key", nameKey, unique = true)
+    def * = (id, name) <> (DbSportDiscipline.tupled, DbSportDiscipline.unapply)
+  }
+
+  case class DbEvent(id: Long, title: String, description: Option[String], dateTime: LocalDateTime,
+                     maxParticipants: Option[Int], ownerId:UUID, disciplineId: Long)
+
+  class EventsTable(tag: Tag) extends Table[DbEvent](tag, "events") {
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def title = column[String]("title")
+    def description = column[Option[String]]("description")
+    def dateTime = column[LocalDateTime]("date_time")
+    def maxParticipants = column[Option[Int]]("max_participants")
+    def ownerId = column[UUID]("owner_id")
+    def disciplineId = column[Long]("discipline_id")
+    def ownerFk = foreignKey("fk_event_owner", ownerId, slickUsers)(_.id)
+    def disciplineFk = foreignKey("fk_event_discipline", disciplineId, sportDisciplinesQuery)(_.id)
+    def * = (id, title, description, dateTime, maxParticipants, ownerId, disciplineId) <> (DbEvent.tupled, DbEvent.unapply)
+  }
+
+  case class DbEventParticipant(id: Long, eventId: Long, userId: UUID)
+
+  class EventParticipants(tag: Tag) extends Table[DbEventParticipant](tag, "event_participants") {
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def eventId = column[Long]("event_id")
+    def userId = column[UUID]("user_id")
+    def eventFk = foreignKey("fk_event_participants_event", eventId, eventsQuery)(_.id)
+    def userFk = foreignKey("fk_event_participants_user", userId, slickUsers)(_.id)
+    def * = (id, eventId, userId) <> (DbEventParticipant.tupled, DbEventParticipant.unapply)
+  }
+
   // table query definitions
   val slickUsers = TableQuery[Users]
   val slickLoginInfos = TableQuery[LoginInfos]
   val slickUserLoginInfos = TableQuery[UserLoginInfos]
   val slickPasswordInfos = TableQuery[PasswordInfos]
   val slickOAuth2Infos = TableQuery[OAuth2Infos]
+  val sportDisciplinesQuery = TableQuery[SportDisciplinesTable]
+  val eventsQuery = TableQuery[EventsTable]
   
   // queries used in multiple places
   def loginInfoQuery(loginInfo: LoginInfo) = 

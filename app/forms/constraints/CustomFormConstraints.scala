@@ -1,6 +1,6 @@
 package forms.constraints
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 
 import forms.ChangePasswordForm
 import play.api.data.validation.{Constraint, Invalid, Valid}
@@ -16,6 +16,13 @@ object CustomFormConstraints {
             Valid
       } getOrElse Valid
   )
+
+  val FutureLocalDateTime: Constraint[LocalDateTime] = Constraint("future.local.date.time"){ dateTime =>
+    if (dateTime.isAfter(LocalDateTime.now()))
+      Valid
+    else
+      Invalid("error.date.time.not.future")
+  }
 
   val SamePasswordAndRepeat: Constraint[ChangePasswordForm.Data] = Constraint("same.password.repeat")(
     data =>
