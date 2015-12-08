@@ -40,7 +40,7 @@ class ApplicationController @Inject() (
    */
   def signIn = UserAwareAction.async { implicit request =>
     request.identity match {
-      case Some(user) => Future.successful(Redirect(routes.ApplicationController.index()))
+      case Some(user) => Future.successful(Redirect(routes.ApplicationController.index()).flashing(request.flash))
       case None => Future.successful(Ok(views.html.signIn(SignInForm.form, socialProviderRegistry)))
     }
   }

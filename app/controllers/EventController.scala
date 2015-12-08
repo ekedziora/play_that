@@ -1,5 +1,6 @@
 package controllers
 
+import authorization.AuthorizeEventByOwner
 import com.google.inject.Inject
 import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
@@ -36,7 +37,7 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
     )
   }
 
-  def showEventDetails(eventId: Long) = SecuredAction.async { implicit request =>
+  def showEventDetails(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>
     eventService.getEventDetails(eventId).map { event =>
       Ok(views.html.eventDetails(event, request.identity))
     } recoverWith {

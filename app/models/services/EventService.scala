@@ -15,4 +15,6 @@ trait EventService {
 
   def getEventDetails(eventId: Long): Future[Event]
 
+  def getEventOwnerId(eventId: Long): Future[Option[UUID]]
+
 }

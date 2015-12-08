@@ -1,6 +1,11 @@
-@(user: models.User)(implicit messages: Messages)
+@(user: models.User)(implicit request: RequestHeader, messages: Messages)
 
 @main(Messages("home.title"), Some(user)) {
+    @request.flash.get("error").map { msg =>
+        <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
+            @msg
+        </div>
+    }
     <div class="row text-center">
         <a class="btn btn-info" role="button" href="@routes.EventController.showAddEventPage()">@Messages("event.add.title")</a>
     </div>
