@@ -27,6 +27,12 @@ trait DBTableDefinitions extends CustomTypes {
     def this(user: User) {
       this(user.userID, user.username, user.firstName, user.lastName, user.email, user.gender, user.birthDate, user.avatarURL)
     }
+
+    def getFullName: Option[String] = {
+      firstName.map { firstNameVal =>
+        firstNameVal + lastName.getOrElse("")
+      } orElse(lastName)
+    }
   }
 
   class Users(tag: Tag) extends Table[DBUser](tag, "user") {
@@ -109,7 +115,7 @@ trait DBTableDefinitions extends CustomTypes {
     def * = (id.?, accessToken, tokenType, expiresIn, refreshToken, loginInfoId) <> (DBOAuth2Info.tupled, DBOAuth2Info.unapply)
   }
 
-  case class DbSportDiscipline(id: Long, name: String)
+  case class DbSportDiscipline(id: Long, name: String, nameKey: String)
 
   class SportDisciplinesTable(tag: Tag) extends Table[DbSportDiscipline](tag, "sport_disciplines") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
@@ -117,7 +123,7 @@ trait DBTableDefinitions extends CustomTypes {
     def nameKey = column[String]("name_key")
     def uniqueName = index("unique_name", name, unique = true)
     def uniqueNameKey = index("unique_name_key", nameKey, unique = true)
-    def * = (id, name) <> (DbSportDiscipline.tupled, DbSportDiscipline.unapply)
+    def * = (id, name, nameKey) <> (DbSportDiscipline.tupled, DbSportDiscipline.unapply)
   }
 
   case class DbEvent(id: Long, title: String, description: Option[String], dateTime: LocalDateTime,

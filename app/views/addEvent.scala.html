@@ -24,7 +24,8 @@
                     @b3.text(addEventForm("description"), '_label -> Messages("description"))
                     @b3.datetime(addEventForm("dateTime"), '_label -> Messages("date.time"), 'placeholder -> Messages("date.time.format"), '_class -> "required", 'required -> "true")
                     @b3.number(addEventForm("maxParticipants"), '_label -> Messages("max.participants"))
-                    @b3.select(addEventForm("disciplineId"), disciplineOptions, '_label -> Messages("discipline"), '_class -> "required", 'required -> disciplineOptions.nonEmpty)
+                    @b3.select(addEventForm("disciplineId"), disciplineOptions.map {case (id, nameKey) => (id, Messages(nameKey))},
+                        '_label -> Messages("discipline"), '_class -> "required", 'required -> disciplineOptions.nonEmpty)
                     @b3.submit('class -> "btn btn-lg btn-primary btn-block"){ @Messages("save") }
                 }
             </div>

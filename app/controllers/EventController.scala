@@ -6,8 +6,11 @@ import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import forms.AddEventForm
 import models.User
 import models.services.EventService
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
+import utils.NotFoundException
+
+import scala.concurrent.Future
 
 class EventController @Inject() (val messagesApi: MessagesApi, val env: Environment[User, CookieAuthenticator], val eventService: EventService)
   extends Silhouette[User, CookieAuthenticator] {
@@ -28,10 +31,20 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       data => {
         eventService.saveNewEvent(data).map { eventId =>
           // redirect do strony ze szczegółami eventu + flashing
-          Redirect(routes.ApplicationController.index())
+          Redirect(routes.EventController.showEventDetails(eventId)).flashing("info" -> Messages("event.added"))
         }
       }
     )
+  }
+
+  def showEventDetails(eventId: Long) = SecuredAction.async { implicit request =>
+    eventService.getEventDetails(eventId).map { event =>
+      Ok(views.html.eventDetails(event, request.identity))
+    } recoverWith {
+      PartialFunction {
+        case nfe: NotFoundException => Future.successful(NotFound)
+      }
+    }
   }
 
 }

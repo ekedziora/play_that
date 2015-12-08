@@ -1,0 +1,45 @@
+@import utils.DateTimeUtils
+@(event: models.Event, user: models.User)(implicit request: RequestHeader, messages: Messages)
+
+@main(Messages("event.details.title"), Some(user)) {
+    <div class="user col-md-6 col-md-offset-3">
+        <div class="row data">
+            @request.flash.get("info").map { msg =>
+                <div class="col-md-6 col-md-offset-3 alert alert-info">
+                    @msg
+                </div>
+            }
+            <div class="col-md-12">
+                <div class="row text-center">
+                    <p class="col-md-6"><h2>@event.title</h2>
+                </div>
+                <hr class="col-md-12" />
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("description"):</strong></p>
+                    <p class="col-md-6">@event.description</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("date.time"):</strong></p>
+                    <p class="col-md-6">@event.dateTime.format(DateTimeUtils.dateTimeFormatter)</p>
+                </div>
+                @if(event.maxParticipants.isDefined) {
+                    <div class="row">
+                        <p class="col-md-6"><strong>@Messages("max.participants"):</strong></p>
+                        <p class="col-md-6">@event.maxParticipants</p>
+                    </div>
+                }
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("owner"):</strong></p>
+                    <p class="col-md-6">@event.ownerUsername.getOrElse("")</p>
+                </div>
+                <div class="row">
+                    <p class="col-md-6"><strong>@Messages("discipline"):</strong></p>
+                    <p class="col-md-6">@Messages(event.disciplineNameKey)</p>
+                </div>
+            </div>
+            <hr class="col-md-12" />
+            <div class="row text-center">
+            </div>
+        </div>
+    </div>
+}

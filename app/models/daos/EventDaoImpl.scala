@@ -3,7 +3,9 @@ package models.daos
 import javax.inject.Inject
 
 import forms.AddEventForm
+import models.Event
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
 
@@ -18,6 +20,19 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
      ((newEventData.title, newEventData.description, newEventData.dateTime, newEventData.maxParticipants, newEventData.ownerId, newEventData.disciplineId))
 
     db.run(insertAction)
+  }
+
+  override def getEventDetails(eventId: Long): Future[Event] = {
+    val query = eventsQuery join slickUsers on(_.ownerId === _.id) join sportDisciplinesQuery on(_._1.disciplineId === _.id) filter(_._1._1.id === eventId)
+    db.run(query.result.headOption) map { option =>
+      option.map { tuple =>
+        val dbEvent = tuple._1._1
+        val dbUser = tuple._1._2
+        val dbDiscipline = tuple._2
+        new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
+          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey)
+      } getOrElse(throw utils.NotFoundException())
+    }
   }
 
 }

@@ -16,10 +16,10 @@ class ValidationException private (message: String = null, cause: Throwable = nu
 
 object ValidationException {
   def createWithValidationMessageKey(validationMessageKey: String): ValidationException = {
-    new ValidationException(validationMessageKey = Some(validationMessageKey))
+    new ValidationException(validationMessageKey = Option(validationMessageKey))
   }
 
   def createWithValidationMessage(validationMessage: String): ValidationException = {
-    new ValidationException(validationMessage = Some(validationMessage))
+    new ValidationException(validationMessage = Option(validationMessage))
   }
 }
