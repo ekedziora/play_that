@@ -49,8 +49,7 @@ class UserAccountController @Inject() (
   }
 
   def showChangePasswordPage = SecuredAction.async { implicit request =>
-    val form = ChangePasswordForm.form.fill(new ChangePasswordForm.Data(request.identity))
-    Future.successful(Ok(views.html.changePassword(form, request.identity)))
+    Future.successful(Ok(views.html.changePassword(ChangePasswordForm.form, request.identity)))
   }
 
   def changePassword = SecuredAction.async { implicit request =>

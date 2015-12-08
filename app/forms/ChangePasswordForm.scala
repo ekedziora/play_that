@@ -3,7 +3,6 @@ package forms
 import java.util.UUID
 
 import forms.constraints.CustomFormConstraints
-import models.User
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.Constraints
@@ -20,10 +19,6 @@ object ChangePasswordForm {
     )(Data.apply)(Data.unapply).verifying(CustomFormConstraints.SamePasswordAndRepeat)
   )
 
-  case class Data(userId: UUID, oldPassword: String, newPassword: String, newPasswordRepeat: String) {
-    def this(user: User) = {
-      this(user.userID, null, null, null)
-    }
-  }
+  case class Data(userId: UUID, oldPassword: String, newPassword: String, newPasswordRepeat: String)
 
 }
