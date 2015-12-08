@@ -29,8 +29,7 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
         }
       },
       data => {
-        eventService.saveNewEvent(data).map { eventId =>
-          // redirect do strony ze szczegółami eventu + flashing
+        eventService.saveNewEvent(data, request.identity.userID).map { eventId =>
           Redirect(routes.EventController.showEventDetails(eventId)).flashing("info" -> Messages("event.added"))
         }
       }

@@ -1,5 +1,7 @@
 package models.services
 
+import java.util.UUID
+
 import forms.AddEventForm
 import models.Event
 
@@ -9,7 +11,7 @@ trait EventService {
 
   def getDisciplineOptions: Future[Seq[(String, String)]]
 
-  def saveNewEvent(addEventData: AddEventForm.Data): Future[Long]
+  def saveNewEvent(addEventData: AddEventForm.Data, ownerId: UUID): Future[Long]
 
   def getEventDetails(eventId: Long): Future[Event]
 

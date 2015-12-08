@@ -35,7 +35,7 @@ class UserAccountController @Inject() (
     AccountDetailsEditForm.form.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(views.html.accountDetailsEdit(formWithErrors, request.identity))),
       data => {
-        userService.updateAccountDetails(data).map { status =>
+        userService.updateAccountDetails(data, request.identity.userID).map { status =>
           Redirect(routes.UserAccountController.showAccountDetails).flashing("info" -> Messages("account.details.updated"))
         }.recoverWith {
           PartialFunction {
@@ -56,7 +56,7 @@ class UserAccountController @Inject() (
     ChangePasswordForm.form.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(views.html.changePassword(formWithErrors, request.identity))),
       data =>
-        userService.changePassword(data).map { status =>
+        userService.changePassword(data, request.identity.userID).map { status =>
           Redirect(routes.UserAccountController.showAccountDetails).flashing("info" -> Messages("password.changed"))
         }.recoverWith {
           PartialFunction {

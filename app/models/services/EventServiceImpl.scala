@@ -1,5 +1,6 @@
 package models.services
 
+import java.util.UUID
 import javax.inject.Inject
 
 import forms.AddEventForm
@@ -19,8 +20,8 @@ class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventD
     }
   }
 
-  override def saveNewEvent(addEventData: AddEventForm.Data): Future[Long] = {
-    eventDao.insertNewEvent(addEventData)
+  override def saveNewEvent(addEventData: AddEventForm.Data, ownerId: UUID): Future[Long] = {
+    eventDao.insertNewEvent(addEventData, ownerId)
   }
 
   override def getEventDetails(eventId: Long): Future[Event] = {

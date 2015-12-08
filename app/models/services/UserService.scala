@@ -1,5 +1,7 @@
 package models.services
 
+import java.util.UUID
+
 import com.mohiva.play.silhouette.api.AuthInfo
 import com.mohiva.play.silhouette.api.services.IdentityService
 import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
@@ -19,7 +21,7 @@ trait UserService extends IdentityService[User] {
    * @param data change password data
    * @return new password info
    */
-  def changePassword(data: ChangePasswordForm.Data): Future[AuthInfo]
+  def changePassword(data: ChangePasswordForm.Data, userId: UUID): Future[AuthInfo]
 
   /**
    * Updates user account data
@@ -27,7 +29,7 @@ trait UserService extends IdentityService[User] {
    * @param accountData user account data to update
    * @return status of operation
    */
-  def updateAccountDetails(accountData: AccountDetailsEditForm.Data) : Future[Int]
+  def updateAccountDetails(accountData: AccountDetailsEditForm.Data, userId: UUID) : Future[Int]
 
   /**
    * Checks if there exists user with given username

@@ -30,7 +30,7 @@ trait UserDAO {
    * @param accountData data to update
    * @return Status of operation
    */
-  def updateUserAccount(accountData: Data): Future[Int]
+  def updateUserAccount(accountData: Data, userId: UUID): Future[Int]
 
   /**
    * Finds a user by its login info.

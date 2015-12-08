@@ -1,7 +1,6 @@
 package forms
 
 import java.time.LocalDate
-import java.util.UUID
 
 import forms.constraints.CustomFormConstraints.PastOptionLocalDateConstraint
 import forms.mappings.CustomFormMappings._
@@ -13,7 +12,6 @@ object AccountDetailsEditForm {
 
   val form = Form(
     mapping(
-      "userId" -> uuid,
       "username" -> nonEmptyText,
       "firstName" -> optional(text),
       "lastName" -> optional(text),
@@ -22,10 +20,9 @@ object AccountDetailsEditForm {
     )(Data.apply)(Data.unapply)
   )
 
-  case class Data(userId: UUID, username: String, firstName: Option[String], lastName: Option[String], gender: Option[Gender], birthDate: Option[LocalDate]) {
-
+  case class Data(username: String, firstName: Option[String], lastName: Option[String], gender: Option[Gender], birthDate: Option[LocalDate]) {
     def this(user: User) {
-      this(user.userID, user.username.getOrElse(""), user.firstName, user.lastName, user.gender, user.birthDate)
+      this(user.username.getOrElse(""), user.firstName, user.lastName, user.gender, user.birthDate)
     }
   }
 

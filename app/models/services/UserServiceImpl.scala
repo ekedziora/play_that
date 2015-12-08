@@ -26,8 +26,8 @@ class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHashe
 
   override def retrieve(loginInfo: LoginInfo): Future[Option[User]] = userDAO.find(loginInfo)
 
-  override def changePassword(data: ChangePasswordForm.Data): Future[AuthInfo] = {
-    userDAO.findLoginInfoByUserIdAndProviderId(data.userId, CredentialsProvider.ID).flatMap { loginInfo =>
+  override def changePassword(data: ChangePasswordForm.Data, userId: UUID): Future[AuthInfo] = {
+    userDAO.findLoginInfoByUserIdAndProviderId(userId, CredentialsProvider.ID).flatMap { loginInfo =>
       authInfoRepository.find[PasswordInfo](loginInfo).flatMap { optionPasswordInfo =>
         if (optionPasswordInfo.isDefined && passwordHasher.matches(optionPasswordInfo.get, data.oldPassword)) {
           authInfoRepository.update(loginInfo, passwordHasher.hash(data.newPassword))
@@ -38,10 +38,10 @@ class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHashe
     }
   }
 
-  override def updateAccountDetails(accountData: Data): Future[Int] = {
-    userDAO.findDuplicatedUsername(Option(accountData.username), Some(accountData.userId)).flatMap {
+  override def updateAccountDetails(accountData: Data, userId: UUID): Future[Int] = {
+    userDAO.findDuplicatedUsername(Option(accountData.username), Some(userId)).flatMap {
       case true => Future.failed(ValidationException.createWithValidationMessageKey("username.exists"))
-      case false => userDAO.updateUserAccount(accountData)
+      case false => userDAO.updateUserAccount(accountData, userId)
     }
   }
 

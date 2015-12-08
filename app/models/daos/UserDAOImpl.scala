@@ -33,9 +33,8 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     }
   }
 
-  override def updateUserAccount(accountData: Data): Future[Int] = {
-    val z = slickUsers.filter(_.id === accountData.userId)
-    val q = slickUsers.filter(_.id === accountData.userId)
+  override def updateUserAccount(accountData: Data, userId: UUID): Future[Int] = {
+    val q = slickUsers.filter(_.id === userId)
       .map(x => (x.username, x.firstName, x.lastName, x.gender, x.birthDate))
       .update((Option(accountData.username), accountData.firstName, accountData.lastName, accountData.gender, accountData.birthDate))
     db.run(q)

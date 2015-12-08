@@ -1,5 +1,6 @@
 package models.daos
 
+import java.util.UUID
 import javax.inject.Inject
 
 import forms.AddEventForm
@@ -13,11 +14,11 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
 
   import driver.api._
 
-  override def insertNewEvent(newEventData: AddEventForm.Data): Future[Long] = {
+  override def insertNewEvent(newEventData: AddEventForm.Data, ownerId: UUID): Future[Long] = {
     val insertAction = eventsQuery.map { event =>
       (event.title, event.description, event.dateTime, event.maxParticipants, event.ownerId, event.disciplineId)
     } returning eventsQuery.map(_.id) +=
-     ((newEventData.title, newEventData.description, newEventData.dateTime, newEventData.maxParticipants, newEventData.ownerId, newEventData.disciplineId))
+     ((newEventData.title, newEventData.description, newEventData.dateTime, newEventData.maxParticipants, ownerId, newEventData.disciplineId))
 
     db.run(insertAction)
   }
