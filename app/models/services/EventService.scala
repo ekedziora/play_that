@@ -41,4 +41,13 @@ trait EventService {
     */
   def getEventOwnerId(eventId: Long): Future[Option[UUID]]
 
+  /**
+    * Updates event with specified id
+    *
+    * @param eventId event id
+    * @param eventData data for update
+    * @return number of updated events
+    */
+  def updateEvent(eventId: Long, eventData: AddEventForm.Data): Future[Int]
+
 }

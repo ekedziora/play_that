@@ -1,0 +1,33 @@
+@(eventId: Long, addEventForm: Form[forms.AddEventForm.Data], disciplineOptions: Seq[(String, String)], user: models.User)(implicit request: RequestHeader, messages: Messages)
+
+@import b3.vertical.fieldConstructor
+
+@main(Messages("event.edit.title"), Some(user)) {
+    <div class="user col-md-6 col-md-offset-3">
+        <div class="row">
+            <hr class="col-md-12" />
+            <h4 class="col-md-8">@Messages("event.edit.title")</h4>
+            <hr class="col-md-12" />
+        </div>
+        <div class="row data">
+            @addEventForm.globalError.map { error =>
+                <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
+                    <a href="#" class="close" data-dismiss="alert">&times;</a>
+                    @error.messages
+                </div>
+            }
+            <div class="col-md-12">
+                @helper.form(action = routes.EventController.updateEvent(eventId)) {
+                    @helper.CSRF.formField
+                    @b3.text(addEventForm("title"), '_label -> Messages("title"), '_class -> "required")
+                    @b3.text(addEventForm("description"), '_label -> Messages("description"))
+                    @b3.datetime(addEventForm("dateTime"), '_label -> Messages("date.time"), 'placeholder -> Messages("date.time.format"), '_class -> "required", 'required -> "true")
+                    @b3.number(addEventForm("maxParticipants"), '_label -> Messages("max.participants"))
+                    @b3.select(addEventForm("disciplineId"), disciplineOptions.map {case (id, nameKey) => (id, Messages(nameKey))},
+                        '_label -> Messages("discipline"), '_class -> "required", 'required -> disciplineOptions.nonEmpty)
+                    @b3.submit('class -> "btn btn-lg btn-primary btn-block"){ @Messages("save") }
+                }
+            </div>
+        </div>
+    </div>
+}

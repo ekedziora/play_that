@@ -21,6 +21,7 @@ account.details.edit.title = Edit account details
 change.password.title = Change password
 event.add.title = Add event
 event.details.title = Event details
+event.edit.title = Edit event
 sign.up.title = Play that - Sign Up
 sign.in.title = Play that - Sign In
 
@@ -65,8 +66,8 @@ discipline.football = Football
 discipline.volleyball = Volleyball
 
 event.added = Event added successfully
+event.updated = Event updated successfully
 account.details.updated = Account details updated successfully
-edit.account.details = Edit account details
 change.password = Change password
 save = Save
 

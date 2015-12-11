@@ -18,6 +18,8 @@ POST        /accountDetails/changePassword   controllers.UserAccountController.c
 GET         /event/add                       controllers.EventController.showAddEventPage
 POST        /event/add                       controllers.EventController.saveNewEvent
 GET         /event/:eventId                  controllers.EventController.showEventDetails(eventId: Long)
+GET         /event/:eventId/edit             controllers.EventController.showEditEventPage(eventId: Long)
+POST        /event/:eventId/edit             controllers.EventController.updateEvent(eventId: Long)
 
 
 # Map static resources from the /public folder to the /assets URL path

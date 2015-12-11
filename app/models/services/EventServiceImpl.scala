@@ -32,4 +32,8 @@ class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventD
     eventDao.getEventOwnerId(eventId)
   }
 
+  override def updateEvent(eventId: Long, eventData: AddEventForm.Data): Future[Int] = {
+    eventDao.updateEvent(eventId, eventData)
+  }
+
 }

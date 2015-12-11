@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 import play.api.data.FormError
 import play.api.data.format.Formatter
-import utils.DateTimeUtils.parseLocalDateTime
+import utils.DateTimeUtils.{formatLocalDateTime, parseLocalDateTime}
 
 class LocalDateTimeMapping extends Formatter[LocalDateTime] {
 
@@ -14,5 +14,5 @@ class LocalDateTimeMapping extends Formatter[LocalDateTime] {
     } getOrElse Left(Seq(FormError(key, "error.required")))
   }
 
-  override def unbind(key: String, value: LocalDateTime): Map[String, String] = Map(key -> value.toString)
+  override def unbind(key: String, value: LocalDateTime): Map[String, String] = Map(key -> formatLocalDateTime(value))
 }

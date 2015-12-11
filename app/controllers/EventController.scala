@@ -47,4 +47,35 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
     }
   }
 
+  def showEditEventPage(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>
+    val eventDetailsFuture = eventService.getEventDetails(eventId)
+    val disciplineOptionsFuture = eventService.getDisciplineOptions
+
+    (for {
+      event <- eventDetailsFuture
+      options <- disciplineOptionsFuture
+    } yield {
+      val form = AddEventForm.form.fill(new AddEventForm.Data(event))
+      Ok(views.html.editEvent(eventId, form, options, request.identity))
+    }).recoverWith {
+      PartialFunction {
+        case nfe: NotFoundException => Future.successful(NotFound)
+      }
+    }
+  }
+
+  def updateEvent(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>
+    AddEventForm.form.bindFromRequest.fold(
+      formWithErrors => {
+        eventService.getDisciplineOptions.map { optionsSeq =>
+          BadRequest(views.html.editEvent(eventId, formWithErrors, optionsSeq, request.identity))
+        }
+      },
+      data => {
+        eventService.updateEvent(eventId, data).map { updatedCount =>
+          Redirect(routes.EventController.showEventDetails(eventId)).flashing("info" -> Messages("event.updated"))
+        }
+      }
+    )
+  }
 }

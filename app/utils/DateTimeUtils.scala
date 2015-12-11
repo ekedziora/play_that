@@ -7,7 +7,7 @@ import scala.util.Try
 
 object DateTimeUtils {
 
-  val dateTimeFormatter: DateTimeFormatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+  private val dateTimeFormatter: DateTimeFormatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
   def parseLocalDate(value: String): Option[LocalDate] = {
     Try(LocalDate.parse(value)).toOption
@@ -15,6 +15,10 @@ object DateTimeUtils {
 
   def parseLocalDateTime(value: String): Option[LocalDateTime] = {
     Try(LocalDateTime.parse(value, dateTimeFormatter)).toOption
+  }
+
+  def formatLocalDateTime(localDateTime: LocalDateTime): String = {
+    localDateTime.format(dateTimeFormatter)
   }
 
 }

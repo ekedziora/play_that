@@ -20,7 +20,7 @@
                 </div>
                 <div class="row">
                     <p class="col-md-6"><strong>@Messages("date.time"):</strong></p>
-                    <p class="col-md-6">@event.dateTime.format(DateTimeUtils.dateTimeFormatter)</p>
+                    <p class="col-md-6">@DateTimeUtils.formatLocalDateTime(event.dateTime)</p>
                 </div>
                 @if(event.maxParticipants.isDefined) {
                     <div class="row">
@@ -39,6 +39,7 @@
             </div>
             <hr class="col-md-12" />
             <div class="row text-center">
+                <a class="btn btn-info" role="button" href="@routes.EventController.showEditEventPage(event.id)">@Messages("event.edit.title")</a>
             </div>
         </div>
     </div>

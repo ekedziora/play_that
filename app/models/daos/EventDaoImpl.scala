@@ -41,4 +41,13 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
     db.run(query.result.headOption)
   }
 
+  override def updateEvent(eventId: Long, eventData: AddEventForm.Data): Future[Int] = {
+    val query = eventsQuery
+      .filter(_.id === eventId)
+      .map(e => (e.title, e.description, e.dateTime, e.maxParticipants, e.disciplineId))
+      .update((eventData.title, eventData.description, eventData.dateTime, eventData.maxParticipants, eventData.disciplineId))
+
+    db.run(query)
+  }
+
 }
