@@ -19,7 +19,6 @@
             <div class="col-md-12">
                 @helper.form(action = routes.EventController.saveNewEvent()) {
                     @helper.CSRF.formField
-                    @b3.hidden("ownerId", user.userID)
                     @b3.text(addEventForm("title"), '_label -> Messages("title"), '_class -> "required")
                     @b3.text(addEventForm("description"), '_label -> Messages("description"))
                     @b3.datetime(addEventForm("dateTime"), '_label -> Messages("date.time"), 'placeholder -> Messages("date.time.format"), '_class -> "required", 'required -> "true")

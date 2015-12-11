@@ -19,7 +19,6 @@
             <div class="col-md-12">
                 @helper.form(action = routes.UserAccountController.saveAccountDetails()) {
                     @helper.CSRF.formField
-                    @b3.hidden("userId", accountDetailsForm("userId").value)
                     @b3.text(accountDetailsForm("username"), '_label -> Messages("username"), '_class -> "required")
                     @b3.text(accountDetailsForm("firstName"), '_label -> Messages("first.name"))
                     @b3.text(accountDetailsForm("lastName"), '_label -> Messages("last.name"))
