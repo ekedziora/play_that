@@ -10,10 +10,10 @@ object CustomFormConstraints {
   val PastOptionLocalDateConstraint: Constraint[Option[LocalDate]] = Constraint("past.option.local.date")(
     optionLocalDate =>
       optionLocalDate map { localDate =>
-          if (localDate.isAfter(LocalDate.now()))
-            Invalid("error.date.not.past")
-          else
+          if (localDate.isBefore(LocalDate.now()))
             Valid
+          else
+            Invalid("error.date.not.past")
       } getOrElse Valid
   )
 

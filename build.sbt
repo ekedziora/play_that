@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette" % "3.0.4",
   "com.mohiva" %% "play-silhouette-testkit" % "3.0.4" % "test",
   "org.webjars" %% "webjars-play" % "2.4.0-1",
+  "org.webjars" % "jquery-ui" % "1.11.4",
+  "org.webjars" % "datetimepicker" % "2.3.4",
   "net.codingwell" %% "scala-guice" % "4.0.0",
   "net.ceedubs" %% "ficus" % "1.1.2",
   "com.adrianhurt" %% "play-bootstrap" % "1.0-P24-B3-SNAPSHOT",

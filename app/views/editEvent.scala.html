@@ -3,6 +3,7 @@
 @import b3.vertical.fieldConstructor
 
 @main(Messages("event.edit.title"), Some(user)) {
+    <script type="text/javascript" src="@routes.Assets.at("scripts/dateTimePicker.js")"></script>
     <div class="user col-md-6 col-md-offset-3">
         <div class="row">
             <hr class="col-md-12" />
@@ -21,7 +22,7 @@
                     @helper.CSRF.formField
                     @b3.text(addEventForm("title"), '_label -> Messages("title"), '_class -> "required")
                     @b3.text(addEventForm("description"), '_label -> Messages("description"))
-                    @b3.datetime(addEventForm("dateTime"), '_label -> Messages("date.time"), 'placeholder -> Messages("date.time.format"), '_class -> "required", 'required -> "true")
+                    @b3.text(addEventForm("dateTime"), '_label -> Messages("date.time"), 'placeholder -> Messages("date.time.format"), '_class -> "required", 'required -> "true")
                     @b3.number(addEventForm("maxParticipants"), '_label -> Messages("max.participants"))
                     @b3.select(addEventForm("disciplineId"), disciplineOptions.map {case (id, nameKey) => (id, Messages(nameKey))},
                         '_label -> Messages("discipline"), '_class -> "required", 'required -> disciplineOptions.nonEmpty)
