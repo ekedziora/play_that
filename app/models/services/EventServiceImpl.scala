@@ -12,6 +12,10 @@ import scala.concurrent.Future
 
 class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventDao) extends EventService {
 
+  override def getEventsList: Future[Seq[Event]] = {
+    eventDao.getAllEvents
+  }
+
   override def getDisciplineOptions: Future[Seq[(String, String)]] = {
     disciplineDAO.getDisciplinesOptions.map { optionsSequence =>
       optionsSequence.map { case (id, name) =>

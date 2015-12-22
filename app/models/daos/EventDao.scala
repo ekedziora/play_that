@@ -9,6 +9,8 @@ import scala.concurrent.Future
 
 trait EventDao {
 
+  def getAllEvents: Future[Seq[Event]]
+
   /**
     * Inserts new event
     *

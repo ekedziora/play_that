@@ -2,14 +2,14 @@
 
 @main(Messages("home.title"), Some(user)) {
     @request.flash.get("error").map { msg =>
-        <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
+        <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error text-center">
             @msg
         </div>
     }
-    <div class="row text-center">
-        <a class="btn btn-info" role="button" href="@routes.EventController.showAddEventPage()">@Messages("event.add.title")</a>
-    </div>
     <div class="user col-md-6 col-md-offset-3">
+        <div class="row text-center">
+            <a class="btn btn-info" role="button" href="@routes.EventController.showList()">@Messages("events.look")</a>
+        </div>
         <div class="row">
             <hr class="col-md-12" />
             <h4 class="col-md-8">@Messages("welcome.signed.in")</h4>

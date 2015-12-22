@@ -65,6 +65,10 @@ discipline.basketball = Basketball
 discipline.football = Football
 discipline.volleyball = Volleyball
 
+events.look = Look for events
+
+events.list.title = Events
+
 event.added = Event added successfully
 event.updated = Event updated successfully
 account.details.updated = Account details updated successfully

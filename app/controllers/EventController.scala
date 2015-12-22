@@ -78,4 +78,10 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       }
     )
   }
+
+  def showList = SecuredAction.async { implicit request =>
+    eventService.getEventsList.map { seq =>
+      Ok(views.html.eventsList(seq, request.identity))
+    }
+  }
 }

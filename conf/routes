@@ -20,6 +20,7 @@ POST        /event/add                       controllers.EventController.saveNew
 GET         /event/:eventId                  controllers.EventController.showEventDetails(eventId: Long)
 GET         /event/:eventId/edit             controllers.EventController.showEditEventPage(eventId: Long)
 POST        /event/:eventId/edit             controllers.EventController.updateEvent(eventId: Long)
+GET         /events                          controllers.EventController.showList
 
 
 # Map static resources from the /public folder to the /assets URL path

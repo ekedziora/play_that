@@ -9,6 +9,9 @@ import scala.concurrent.Future
 
 trait EventService {
 
+
+  def getEventsList: Future[Seq[Event]]
+
   /**
     * Gets all discipline as options for option dropdown view element
     *

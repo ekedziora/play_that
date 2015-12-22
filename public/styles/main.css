@@ -94,6 +94,15 @@ a {
 }
 
 .form-group.required .control-label:after {
-    content:"*";
-    color:red;
+    content: "*";
+    color: red;
+}
+
+a.deco-none {
+    color: #000000 !important;
+    text-decoration: none;
+}
+
+a.not-active {
+    pointer-events: none;
 }
