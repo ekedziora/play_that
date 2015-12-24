@@ -18,6 +18,7 @@ import play.api.Configuration
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Action
+import utils.ViewUtils
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -79,7 +80,7 @@ class CredentialsAuthController @Inject() (
           }
         }.recover {
           case e: ProviderException =>
-            Redirect(routes.ApplicationController.signIn()).flashing("error" -> Messages("invalid.credentials"))
+            Redirect(routes.ApplicationController.signIn()).flashing(ViewUtils.ErrorFlashKey -> Messages("invalid.credentials"))
         }
       }
     )

@@ -12,6 +12,7 @@ import models.services.UserService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Action
+import utils.ViewUtils
 
 import scala.concurrent.Future
 
@@ -59,7 +60,7 @@ class SocialAuthController @Inject() (
     }).recover {
       case e: ProviderException =>
         logger.error("Unexpected provider error", e)
-        Redirect(routes.ApplicationController.signIn()).flashing("error" -> Messages("could.not.authenticate"))
+        Redirect(routes.ApplicationController.signIn()).flashing(ViewUtils.ErrorFlashKey -> Messages("could.not.authenticate"))
     }
   }
 }

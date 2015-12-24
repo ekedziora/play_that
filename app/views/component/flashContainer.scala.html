@@ -1,0 +1,11 @@
+@import utils.ViewUtils
+@(flashKey: String)(implicit request: RequestHeader)
+
+@request.flash.get(flashKey).map { msg =>
+    <div class="row">
+        <div class="@ViewUtils.KeyToStyleClass.getOrElse(flashKey, "")">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            @msg
+        </div>
+    </div>
+}

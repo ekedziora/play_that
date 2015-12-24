@@ -9,7 +9,7 @@ import models.User
 import models.services.EventService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
-import utils.NotFoundException
+import utils.{NotFoundException, ViewUtils}
 
 import scala.concurrent.Future
 
@@ -31,7 +31,7 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       },
       data => {
         eventService.saveNewEvent(data, request.identity.userID).map { eventId =>
-          Redirect(routes.EventController.showEventDetails(eventId)).flashing("info" -> Messages("event.added"))
+          Redirect(routes.EventController.showEventDetails(eventId)).flashing(ViewUtils.InfoFlashKey -> Messages("event.added"))
         }
       }
     )
@@ -73,7 +73,7 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       },
       data => {
         eventService.updateEvent(eventId, data).map { updatedCount =>
-          Redirect(routes.EventController.showEventDetails(eventId)).flashing("info" -> Messages("event.updated"))
+          Redirect(routes.EventController.showEventDetails(eventId)).flashing(ViewUtils.InfoFlashKey -> Messages("event.updated"))
         }
       }
     )

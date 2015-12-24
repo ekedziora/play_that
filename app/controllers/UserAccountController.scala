@@ -11,7 +11,7 @@ import models.User
 import models.services.UserService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
-import utils.ValidationException
+import utils.{ValidationException, ViewUtils}
 
 import scala.concurrent.Future
 
@@ -36,7 +36,7 @@ class UserAccountController @Inject() (
       formWithErrors => Future.successful(BadRequest(views.html.accountDetailsEdit(formWithErrors, request.identity))),
       data => {
         userService.updateAccountDetails(data, request.identity.userID).map { status =>
-          Redirect(routes.UserAccountController.showAccountDetails).flashing("info" -> Messages("account.details.updated"))
+          Redirect(routes.UserAccountController.showAccountDetails).flashing(ViewUtils.InfoFlashKey -> Messages("account.details.updated"))
         }.recoverWith {
           PartialFunction {
             case ve: ValidationException =>
@@ -57,7 +57,7 @@ class UserAccountController @Inject() (
       formWithErrors => Future.successful(BadRequest(views.html.changePassword(formWithErrors, request.identity))),
       data =>
         userService.changePassword(data, request.identity.userID).map { status =>
-          Redirect(routes.UserAccountController.showAccountDetails).flashing("info" -> Messages("password.changed"))
+          Redirect(routes.UserAccountController.showAccountDetails).flashing(ViewUtils.InfoFlashKey -> Messages("password.changed"))
         }.recoverWith {
           PartialFunction {
             case ve: ValidationException =>

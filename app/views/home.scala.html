@@ -1,11 +1,9 @@
+@import utils.ViewUtils
+@import views.html.component.flashContainer
 @(user: models.User)(implicit request: RequestHeader, messages: Messages)
 
 @main(Messages("home.title"), Some(user)) {
-    @request.flash.get("error").map { msg =>
-        <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error text-center">
-            @msg
-        </div>
-    }
+    @flashContainer(ViewUtils.ErrorFlashKey)
     <div class="user col-md-6 col-md-offset-3">
         <div class="row text-center">
             <a class="btn btn-info" role="button" href="@routes.EventController.showList()">@Messages("events.look")</a>
