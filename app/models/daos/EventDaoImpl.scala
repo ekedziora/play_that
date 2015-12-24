@@ -49,9 +49,9 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
     }
   }
 
-  override def getEventOwnerId(eventId: Long): Future[Option[UUID]] = {
+  override def getEventOwnerId(eventId: Long): Future[UUID] = {
     val query = eventsQuery.filter(_.id === eventId).map(_.ownerId)
-    db.run(query.result.headOption)
+    db.run(query.result.head)
   }
 
   override def updateEvent(eventId: Long, eventData: AddEventForm.Data): Future[Int] = {

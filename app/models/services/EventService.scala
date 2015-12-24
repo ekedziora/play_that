@@ -42,7 +42,7 @@ trait EventService {
     * @param eventId event id
     * @return event owner id or None if no event with specified id exists
     */
-  def getEventOwnerId(eventId: Long): Future[Option[UUID]]
+  def getEventOwnerId(eventId: Long): Future[UUID]
 
   /**
     * Updates event with specified id

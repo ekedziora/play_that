@@ -12,8 +12,8 @@ import scala.concurrent.Future
 
 case class AuthorizeEventByOwner (eventId: Long, eventService: EventService) extends Authorization[models.User, CookieAuthenticator] {
   override def isAuthorized[B](identity: User, authenticator: CookieAuthenticator)(implicit request: Request[B], messages: Messages): Future[Boolean] = {
-    eventService.getEventOwnerId(eventId).map { optionOwnerId =>
-      optionOwnerId.contains(identity.userID)
+    eventService.getEventOwnerId(eventId).map { ownerId =>
+      ownerId == identity.userID
     }
   }
 }

@@ -32,7 +32,7 @@ class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventD
     eventDao.getEventDetails(eventId)
   }
 
-  override def getEventOwnerId(eventId: Long): Future[Option[UUID]] = {
+  override def getEventOwnerId(eventId: Long): Future[UUID] = {
     eventDao.getEventOwnerId(eventId)
   }
 
