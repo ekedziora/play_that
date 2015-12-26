@@ -15,13 +15,14 @@ import com.mohiva.play.silhouette.impl.services._
 import com.mohiva.play.silhouette.impl.util._
 import models.User
 import models.daos._
-import models.services.{EventService, EventServiceImpl, UserService, UserServiceImpl}
+import models.services._
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.WSClient
+import utils.{MailService, MailServiceImpl}
 
 /**
  * The Guice module which wires all Silhouette dependencies.
@@ -37,6 +38,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[UserDAO].to[UserDAOImpl]
     bind[DisciplineDao].to[DisciplineDaoImpl]
     bind[EventDao].to[EventDaoImpl]
+    bind[MailService].to[MailServiceImpl]
+    bind[MailTokenDao].to[MailTokenDaoImpl]
+    bind[MailTokenService].to[MailTokenServiceImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]
     bind[CacheLayer].to[PlayCacheLayer]

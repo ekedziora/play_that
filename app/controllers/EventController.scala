@@ -9,7 +9,7 @@ import models.User
 import models.services.EventService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
-import utils.{NotFoundException, ViewUtils}
+import utils.{ControllerUtils, NotFoundException, ViewUtils}
 
 import scala.concurrent.Future
 
@@ -42,7 +42,7 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       Ok(views.html.eventDetails(event, request.identity))
     } recoverWith {
       PartialFunction {
-        case nfe: NotFoundException => Future.successful(NotFound)
+        case nfe: NotFoundException => Future.successful(ControllerUtils.getDefaultNotFoundResponse)
       }
     }
   }
@@ -59,7 +59,7 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       Ok(views.html.editEvent(eventId, form, options, request.identity))
     }).recoverWith {
       PartialFunction {
-        case nfe: NotFoundException => Future.successful(NotFound)
+        case nfe: NotFoundException => Future.successful(ControllerUtils.getDefaultNotFoundResponse)
       }
     }
   }

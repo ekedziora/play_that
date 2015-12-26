@@ -8,14 +8,15 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
+import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
 import forms.SignUpForm
-import models.User
-import models.services.UserService
-import play.api.i18n.MessagesApi
+import models.services.{MailTokenService, UserService}
+import models.{User, UserMailToken}
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Action
-import utils.ValidationException
+import utils._
 
 import scala.concurrent.Future
 
@@ -33,49 +34,82 @@ class SignUpController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, CookieAuthenticator],
   userService: UserService,
+  mailService: MailService,
+  mailTokenService: MailTokenService,
   authInfoRepository: AuthInfoRepository,
   avatarService: AvatarService,
   passwordHasher: PasswordHasher)
   extends Silhouette[User, CookieAuthenticator] {
 
-  /**
-   * Registers a new user.
-   *
-   * @return The result to display.
-   */
-  def signUp = Action.async { implicit request =>
+  implicit val ms = mailService
+
+  def startSignUp = Action.async { implicit request =>
     SignUpForm.form.bindFromRequest.fold(
       form => Future.successful(BadRequest(views.html.signUp(form))),
       data => {
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
-        val authInfo = passwordHasher.hash(data.password)
-        val user = User (
-          userID = UUID.randomUUID(),
-          loginInfo = loginInfo,
-          username = Option(data.username),
-          email = Some(data.email),
-          avatarURL = None
-        )
 
-        (for {
-          avatar <- avatarService.retrieveURL(data.email)
-          user <- userService.save(user.copy(avatarURL = avatar))
-          authInfo <- authInfoRepository.add(loginInfo, authInfo)
-          authenticator <- env.authenticatorService.create(loginInfo)
-          value <- env.authenticatorService.init(authenticator)
-          result <- env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
-        } yield {
-            env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            env.eventBus.publish(LoginEvent(user, request, request2Messages))
-            result
-        }).recoverWith { ex: Throwable =>
-          ex match {
-            case ve: ValidationException =>
-              val form = SignUpForm.form.fill(data).withGlobalError(ve.getMessageForView)
-              Future.successful(BadRequest(views.html.signUp(form)))
-          }
+        env.identityService.retrieve(loginInfo).flatMap {
+          case Some(_) =>
+            val form = SignUpForm.form.fill(data).withGlobalError(Messages("user.exists"))
+            Future.successful(BadRequest(views.html.signUp(form)))
+          case None =>
+            val authInfo = passwordHasher.hash(data.password)
+            val user = User (
+              userID = UUID.randomUUID(),
+              loginInfo = loginInfo,
+              username = Option(data.username),
+              email = Some(data.email),
+              avatarURL = None
+            )
+
+            (for {
+              avatar <- avatarService.retrieveURL(data.email)
+              user <- userService.saveNewUser(user.copy(avatarURL = avatar))
+              authInfo <- authInfoRepository.add(loginInfo, authInfo)
+              tokenId <- mailTokenService.create(UserMailToken(user.userID, isSignUp = true))
+            } yield {
+              Mailer.welcome(user, link = routes.SignUpController.signUp(tokenId).absoluteURL())
+              Ok(views.html.almostSignedUp(user))
+            }).recoverWith {
+              PartialFunction {
+                case ve: ValidationException =>
+                  val form = SignUpForm.form.fill(data).withGlobalError(ve.getMessageForView)
+                  Future.successful(BadRequest(views.html.signUp(form)))
+              }
+            }
         }
       }
     )
   }
+
+  def signUp(tokenId: UUID) = Action.async { implicit request =>
+        mailTokenService.retrieve(tokenId).flatMap {
+          case Some(token) if token.isSignUp && !token.isExpired =>
+            userService.getById(token.userId).flatMap {
+              case Some(user) =>
+                val loginInfo = LoginInfo(CredentialsProvider.ID, user.email.get)
+                env.authenticatorService.create(loginInfo).flatMap { authenticator =>
+                  if (!user.emailConfirmed) {
+                    userService.updateUser(user.copy(emailConfirmed = true)).map { newUser =>
+                      env.eventBus.publish(SignUpEvent(newUser, request, request2Messages))
+                    }
+                  }
+                  for {
+                    cookie <- env.authenticatorService.init(authenticator)
+                    result <- env.authenticatorService.embed(cookie, Redirect(routes.ApplicationController.index()).flashing(ViewUtils.InfoFlashKey -> Messages("signup.ready")))
+                  } yield {
+                    mailTokenService.consume(tokenId)
+                    env.eventBus.publish(LoginEvent(user, request, request2Messages))
+                    result
+                  }
+                }
+              case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
+            }
+          case Some(token) =>
+            mailTokenService.consume(tokenId)
+            Future.successful(ControllerUtils.getDefaultNotFoundResponse)
+          case None => Future.successful(ControllerUtils.getDefaultNotFoundResponse)
+        }
+    }
 }

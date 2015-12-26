@@ -46,7 +46,7 @@ class SocialAuthController @Inject() (
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
             profile <- p.retrieveProfile(authInfo)
-            user <- userService.save(profile)
+            user <- userService.saveOrUpdateUser(profile)
             authInfo <- authInfoRepository.save(profile.loginInfo, authInfo)
             authenticator <- env.authenticatorService.create(profile.loginInfo)
             value <- env.authenticatorService.init(authenticator)

@@ -9,7 +9,8 @@ GET         /signUp                          controllers.ApplicationController.s
 GET         /signOut                         controllers.ApplicationController.signOut
 GET         /authenticate/:provider          controllers.SocialAuthController.authenticate(provider)
 POST        /authenticate/credentials        controllers.CredentialsAuthController.authenticate
-POST        /signUp                          controllers.SignUpController.signUp
+POST        /signUp                          controllers.SignUpController.startSignUp
+GET		    /signup/:tokenId				 controllers.SignUpController.signUp(tokenId: java.util.UUID)
 GET         /accountDetails                  controllers.UserAccountController.showAccountDetails
 GET         /accountDetails/edit             controllers.UserAccountController.editAccountDetails
 POST        /accountDetails/edit             controllers.UserAccountController.saveAccountDetails

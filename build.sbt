@@ -27,6 +27,7 @@ libraryDependencies ++= Seq(
   specs2 % Test,
   "com.typesafe.play" %% "play-slick" % "1.1.1",
   "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
+  "com.typesafe.play" %% "play-mailer" % "3.0.1",
   "org.postgresql" % "postgresql" % "9.4-1204-jdbc41",
   cache,
   evolutions,

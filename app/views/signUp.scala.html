@@ -14,7 +14,7 @@
     }
     <fieldset class="col-md-6 col-md-offset-3">
         <legend>@Messages("sign.up.account")</legend>
-        @helper.form(action = routes.SignUpController.signUp()) {
+        @helper.form(action = routes.SignUpController.startSignUp()) {
             @helper.CSRF.formField
             @b3.text(signInForm("username"), 'placeholder -> Messages("username"), 'class -> "form-control input-lg")
             @b3.text(signInForm("email"), 'placeholder -> Messages("email"), 'class -> "form-control input-lg")

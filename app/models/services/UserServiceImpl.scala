@@ -24,6 +24,10 @@ import scala.concurrent.Future
 class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHasher, authInfoRepository: AuthInfoRepository)
   extends UserService {
 
+  override def getById(id: UUID): Future[Option[User]] = {
+    userDAO.find(id)
+  }
+
   override def retrieve(loginInfo: LoginInfo): Future[Option[User]] = userDAO.find(loginInfo)
 
   override def changePassword(data: ChangePasswordForm.Data, userId: UUID): Future[AuthInfo] = {
@@ -47,19 +51,18 @@ class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHashe
 
   override def findDuplicatedUsername(username: Option[String]) : Future[Boolean] = userDAO.findDuplicatedUsername(username, None)
 
-  override def save(user: User) = {
+  override def saveNewUser(user: User) = {
     userDAO.findDuplicatedUsername(user.username, None).flatMap {
       case true => Future.failed(ValidationException.createWithValidationMessageKey("username.exists"))
-      case false => userDAO.find(user.loginInfo).flatMap { userOption =>
-        if (userOption.isDefined)
-          Future.failed(ValidationException.createWithValidationMessageKey("user.exists"))
-        else
-          userDAO.save(user)
-      }
+      case false => userDAO.save(user)
     }
   }
 
-  override def save(profile: CommonSocialProfile) = {
+  override def updateUser(user: User): Future[User] = {
+    userDAO.save(user)
+  }
+
+  override def saveOrUpdateUser(profile: CommonSocialProfile) = {
     userDAO.find(profile.loginInfo).flatMap {
       case Some(user) => // Update user with profile
         userDAO.save(user.copy(

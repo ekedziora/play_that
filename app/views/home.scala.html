@@ -4,6 +4,7 @@
 
 @main(Messages("home.title"), Some(user)) {
     @flashContainer(ViewUtils.ErrorFlashKey)
+    @flashContainer(ViewUtils.InfoFlashKey)
     <div class="user col-md-6 col-md-offset-3">
         <div class="row text-center">
             <a class="btn btn-info" role="button" href="@routes.EventController.showList()">@Messages("events.look")</a>

@@ -20,12 +20,13 @@ trait DBTableDefinitions extends CustomTypes {
     firstName: Option[String],
     lastName: Option[String],
     email: Option[String],
+    emailConfirmed: Boolean,
     gender: Option[Gender],
     birthDate: Option[LocalDate],
     avatarURL: Option[String]
   ) {
     def this(user: User) {
-      this(user.userID, user.username, user.firstName, user.lastName, user.email, user.gender, user.birthDate, user.avatarURL)
+      this(user.userID, user.username, user.firstName, user.lastName, user.email, user.emailConfirmed, user.gender, user.birthDate, user.avatarURL)
     }
 
     def getFullName: Option[String] = {
@@ -41,12 +42,24 @@ trait DBTableDefinitions extends CustomTypes {
     def firstName = column[Option[String]]("firstName")
     def lastName = column[Option[String]]("lastName")
     def email = column[Option[String]]("email")
+    def emailConfirmed = column[Boolean]("emailConfirmed")
     def gender = column[Option[Gender]]("gender")
     def birthDate = column[Option[LocalDate]]("birthDate")
     def avatarURL = column[Option[String]]("avatarURL")
     def uniqueUsername = index("username_unique_index", username, unique = true)
     def uniqueEmail = index("email_unique_index", email, unique = true)
-    def * = (id, username, firstName, lastName, email, gender, birthDate, avatarURL) <> (DBUser.tupled, DBUser.unapply)
+    def * = (id, username, firstName, lastName, email, emailConfirmed, gender, birthDate, avatarURL) <> (DBUser.tupled, DBUser.unapply)
+  }
+
+  case class DBUserMailToken(id: UUID, userId: UUID, expirationTime: LocalDateTime, isSignUp: Boolean)
+
+  class UserMailTokens(tag: Tag) extends Table[DBUserMailToken](tag, "user_mail_tokens") {
+    def id = column[UUID]("id", O.PrimaryKey)
+    def userId = column[UUID]("userId")
+    def expirationTime = column[LocalDateTime]("expiration_time")
+    def isSignUp = column[Boolean]("is_sign_up")
+    def userFk = foreignKey("fk_user_mail_token_user_id", userId, slickUsers)(_.id)
+    def * = (id, userId, expirationTime, isSignUp) <> (DBUserMailToken.tupled, DBUserMailToken.unapply)
   }
 
   case class DBLoginInfo (
@@ -155,6 +168,7 @@ trait DBTableDefinitions extends CustomTypes {
 
   // table query definitions
   val slickUsers = TableQuery[Users]
+  val userMailTokensQuery = TableQuery[UserMailTokens]
   val slickLoginInfos = TableQuery[LoginInfos]
   val slickUserLoginInfos = TableQuery[UserLoginInfos]
   val slickPasswordInfos = TableQuery[PasswordInfos]

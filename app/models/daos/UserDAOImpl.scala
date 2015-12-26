@@ -48,7 +48,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     } yield dbUser
     db.run(userQuery.result.headOption).map { dbUserOption =>
       dbUserOption.map { user =>
-        User(user.userID, loginInfo, user.username, user.firstName, user.lastName, user.email, user.gender, user.birthDate, user.avatarURL)
+        User(user.userID, loginInfo, user.username, user.firstName, user.lastName, user.email, user.emailConfirmed, user.gender, user.birthDate, user.avatarURL)
       }
     }
   }
@@ -69,6 +69,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
             user.firstName,
             user.lastName,
             user.email,
+            user.emailConfirmed,
             user.gender,
             user.birthDate,
             user.avatarURL)

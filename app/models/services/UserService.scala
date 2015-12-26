@@ -15,6 +15,8 @@ import scala.concurrent.Future
  */
 trait UserService extends IdentityService[User] {
 
+  def getById(id: UUID): Future[Option[User]]
+
   /**
    * Changes user password
    *
@@ -45,7 +47,9 @@ trait UserService extends IdentityService[User] {
    * @param user The user to save.
    * @return The saved user.
    */
-  def save(user: User): Future[User]
+  def saveNewUser(user: User): Future[User]
+
+  def updateUser(user: User): Future[User]
 
   /**
    * Saves the social profile for a user.
@@ -55,5 +59,5 @@ trait UserService extends IdentityService[User] {
    * @param profile The social profile to save.
    * @return The user for whom the profile was saved.
    */
-  def save(profile: CommonSocialProfile): Future[User]
+  def saveOrUpdateUser(profile: CommonSocialProfile): Future[User]
 }

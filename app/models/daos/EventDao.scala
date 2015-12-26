@@ -34,7 +34,7 @@ trait EventDao {
     * @param eventId event id
     * @return id of event owner or None if no event with specified id exists
     */
-  def getEventOwnerId(eventId: Long): Future[UUID]
+  def getEventOwnerId(eventId: Long): Future[Option[UUID]]
 
   /**
     * Updates event with specified id
