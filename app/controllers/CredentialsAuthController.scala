@@ -60,6 +60,8 @@ class CredentialsAuthController @Inject() (
         credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
           val result = Redirect(routes.ApplicationController.index())
           userService.retrieve(loginInfo).flatMap {
+            case Some(user) if !user.emailConfirmed => Future.successful(Redirect(routes.ApplicationController.signIn())
+              .flashing(ViewUtils.ErrorFlashKey -> Messages("user.not.confirmed")))
             case Some(user) =>
               val c = configuration.underlying
               env.authenticatorService.create(loginInfo).map {

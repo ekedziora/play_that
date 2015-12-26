@@ -35,6 +35,7 @@ sign.up.almost.title = Almost signed up
 signup.thanks = Thank you {0} for sign up!
 signup.sent = We''ve just send you an email to {0}. Please follow its instructions to activate your new account.
 signup.ready = Your account is now active!
+user.not.confirmed = Account is not active, please check your email and follow instructions to activate your account
 
 error = Error!
 home = Home
