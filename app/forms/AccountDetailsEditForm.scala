@@ -22,7 +22,7 @@ object AccountDetailsEditForm {
 
   case class Data(username: String, firstName: Option[String], lastName: Option[String], gender: Option[Gender], birthDate: Option[LocalDate]) {
     def this(user: User) {
-      this(user.username.getOrElse(""), user.firstName, user.lastName, user.gender, user.birthDate)
+      this(user.username, user.firstName, user.lastName, user.gender, user.birthDate)
     }
   }
 

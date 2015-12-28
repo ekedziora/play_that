@@ -12,10 +12,10 @@ object Mailer {
   implicit def html2String(html: Html): String = html.toString
 
   def welcome(user: User, link: String)(implicit ms: MailService, m: Messages) {
-    ms.sendEmailAsync(user.email.get)(
+    ms.sendEmailAsync(user.email)(
       subject = Messages("mail.welcome.subject"),
-      bodyHtml = mails.welcome(user.username.get, link),
-      bodyText = mails.welcomeTxt(user.username.get, link)
+      bodyHtml = mails.welcome(user.username, link),
+      bodyText = mails.welcomeTxt(user.username, link)
     )
   }
 

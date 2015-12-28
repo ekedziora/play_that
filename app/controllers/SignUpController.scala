@@ -58,8 +58,8 @@ class SignUpController @Inject() (
             val user = User (
               userID = UUID.randomUUID(),
               loginInfo = loginInfo,
-              username = Option(data.username),
-              email = Some(data.email),
+              username = data.username,
+              email = data.email,
               avatarURL = None
             )
 
@@ -88,7 +88,7 @@ class SignUpController @Inject() (
           case Some(token) if token.isSignUp && !token.isExpired =>
             userService.getById(token.userId).flatMap {
               case Some(user) =>
-                val loginInfo = LoginInfo(CredentialsProvider.ID, user.email.get)
+                val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
                 env.authenticatorService.create(loginInfo).flatMap { authenticator =>
                   if (!user.emailConfirmed) {
                     userService.updateUser(user.copy(emailConfirmed = true)).map { newUser =>

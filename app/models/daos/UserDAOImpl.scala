@@ -36,7 +36,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   override def updateUserAccount(accountData: Data, userId: UUID): Future[Int] = {
     val q = slickUsers.filter(_.id === userId)
       .map(x => (x.username, x.firstName, x.lastName, x.gender, x.birthDate))
-      .update((Option(accountData.username), accountData.firstName, accountData.lastName, accountData.gender, accountData.birthDate))
+      .update((accountData.username, accountData.firstName, accountData.lastName, accountData.gender, accountData.birthDate))
     db.run(q)
   }
 
@@ -77,7 +77,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     }
   }
 
-  def findDuplicatedUsername(username: Option[String], exceptUserId: Option[UUID]): Future[Boolean] = {
+  def findDuplicatedUsername(username: String, exceptUserId: Option[UUID]): Future[Boolean] = {
       val query = slickUsers.filter(_.username === username).filter( users => exceptUserId.map{users.id =!= _}.getOrElse(true: Rep[Boolean]) )
       db.run(query.result.headOption).map { dbUserOption =>
         dbUserOption match {

@@ -63,5 +63,5 @@ trait UserDAO {
    * @param exceptUserId optional id of user to exclude
    * @return true if duplicated user was found, false otherwise
    */
-  def findDuplicatedUsername(username: Option[String], exceptUserId: Option[UUID]): Future[Boolean]
+  def findDuplicatedUsername(username: String, exceptUserId: Option[UUID]): Future[Boolean]
 }

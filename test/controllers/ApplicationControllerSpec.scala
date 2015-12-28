@@ -11,7 +11,6 @@ import net.codingwell.scalaguice.ScalaModule
 import org.specs2.mock.Mockito
 import org.specs2.specification.Scope
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.concurrent.Execution.Implicits._
 import play.api.test.{FakeRequest, PlaySpecification, WithApplication}
 
 /**
@@ -70,7 +69,9 @@ class ApplicationControllerSpec extends PlaySpecification with Mockito {
      */
     val identity = User(
       userID = UUID.randomUUID(),
-      loginInfo = LoginInfo("facebook", "user@facebook.com")
+      loginInfo = LoginInfo("facebook", "user@facebook.com"),
+      username = "",
+      email = ""
     )
 
     /**

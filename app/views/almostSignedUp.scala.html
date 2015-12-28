@@ -1,6 +1,7 @@
 @(user: User)(implicit messages: Messages)
 
 @main(Messages("sign.up.almost.title"), None) {
-    <p>@Messages("signup.thanks", user.username.get)</p>
-    <p>@Messages("signup.sent", user.email.get)</p>
+    <p>@Messages("signup.thanks", user.username)</p>
+    <p>@Messages("signup.sent", user.email)</p>
+    <p>@Messages("signup.sent", user.email)</p>
 }

@@ -8,10 +8,10 @@ import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
 case class User(
   userID: UUID,
   loginInfo: LoginInfo,
-  username: Option[String] = None,
+  username: String,
   firstName: Option[String] = None,
   lastName: Option[String] = None,
-  email: Option[String] = None,
+  email: String,
   emailConfirmed: Boolean = false,
   gender: Option[Gender] = None,
   birthDate: Option[LocalDate] = None,

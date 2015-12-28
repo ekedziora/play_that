@@ -39,7 +39,7 @@ trait UserService extends IdentityService[User] {
    * @param username username to check
    * @return true if user with username exists, false otherwise
    */
-  def findDuplicatedUsername(username: Option[String]): Future[Boolean]
+  def findDuplicatedUsername(username: String): Future[Boolean]
 
   /**
    * Saves a user.

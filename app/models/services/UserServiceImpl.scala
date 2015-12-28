@@ -43,13 +43,13 @@ class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHashe
   }
 
   override def updateAccountDetails(accountData: Data, userId: UUID): Future[Int] = {
-    userDAO.findDuplicatedUsername(Option(accountData.username), Some(userId)).flatMap {
+    userDAO.findDuplicatedUsername(accountData.username, Some(userId)).flatMap {
       case true => Future.failed(ValidationException.createWithValidationMessageKey("username.exists"))
       case false => userDAO.updateUserAccount(accountData, userId)
     }
   }
 
-  override def findDuplicatedUsername(username: Option[String]) : Future[Boolean] = userDAO.findDuplicatedUsername(username, None)
+  override def findDuplicatedUsername(username: String) : Future[Boolean] = userDAO.findDuplicatedUsername(username, None)
 
   override def saveNewUser(user: User) = {
     userDAO.findDuplicatedUsername(user.username, None).flatMap {
@@ -68,16 +68,17 @@ class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHashe
         userDAO.save(user.copy(
           firstName = profile.firstName,
           lastName = profile.lastName,
-          email = profile.email,
+          email = profile.email.getOrElse(throw new IllegalStateException("There's no email address in social profile")),
           avatarURL = profile.avatarURL
         ))
       case None => // Insert a new user
         userDAO.save(User(
           userID = UUID.randomUUID(),
           loginInfo = profile.loginInfo,
+          username = "",
           firstName = profile.firstName,
           lastName = profile.lastName,
-          email = profile.email,
+          email = profile.email.getOrElse(throw new IllegalStateException("There's no email address in social profile")),
           avatarURL = profile.avatarURL
         ))
     }

@@ -16,10 +16,10 @@ trait DBTableDefinitions extends CustomTypes {
 
   case class DBUser (
     userID: UUID,
-    username: Option[String],
+    username: String,
     firstName: Option[String],
     lastName: Option[String],
-    email: Option[String],
+    email: String,
     emailConfirmed: Boolean,
     gender: Option[Gender],
     birthDate: Option[LocalDate],
@@ -38,10 +38,10 @@ trait DBTableDefinitions extends CustomTypes {
 
   class Users(tag: Tag) extends Table[DBUser](tag, "user") {
     def id = column[UUID]("userID", O.PrimaryKey)
-    def username = column[Option[String]]("username")
+    def username = column[String]("username")
     def firstName = column[Option[String]]("firstName")
     def lastName = column[Option[String]]("lastName")
-    def email = column[Option[String]]("email")
+    def email = column[String]("email")
     def emailConfirmed = column[Boolean]("emailConfirmed")
     def gender = column[Option[Gender]]("gender")
     def birthDate = column[Option[LocalDate]]("birthDate")
