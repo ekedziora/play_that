@@ -19,6 +19,6 @@ object Gender extends EnumOf[Gender] {
   }
 
   def fromProfile(value: String): Option[Gender] = {
-    Gender.values.find(_.dbValue.toLowerCase == value)
+    Gender.values.find(_.name.toLowerCase == value)
   }
 }

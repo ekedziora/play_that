@@ -59,5 +59,12 @@ trait UserService extends IdentityService[User] {
    * @param profile The social profile to save.
    * @return The user for whom the profile was saved.
    */
-  def saveOrUpdateUser(profile: CustomSocialProfile): Future[User]
+  def saveOrUpdateUser(profile: CustomSocialProfile): Future[(User, Boolean)]
+
+  /**
+    * Generates random unique username
+    *
+    * @return random unique username
+    */
+  def createRandomUniqueUsername: Future[String]
 }

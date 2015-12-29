@@ -48,11 +48,16 @@ class SocialAuthController @Inject() (
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
             profile <- p.retrieveProfile(authInfo)
-            user <- userService.saveOrUpdateUser(profile)
+            (user, isNew) <- userService.saveOrUpdateUser(profile)
             authInfo <- authInfoRepository.save(profile.loginInfo, authInfo)
             authenticator <- env.authenticatorService.create(profile.loginInfo)
             value <- env.authenticatorService.init(authenticator)
-            result <- env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
+            result <- env.authenticatorService.embed(value,
+            if (isNew) {
+              Redirect(routes.ApplicationController.index()).flashing(ViewUtils.InfoFlashKey -> Messages("change.random.username"))
+            } else {
+              Redirect(routes.ApplicationController.index())
+            })
           } yield {
             env.eventBus.publish(LoginEvent(user, request, request2Messages))
             result

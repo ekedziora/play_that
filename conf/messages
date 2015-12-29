@@ -15,6 +15,7 @@ password.policy.error = Password must be at least 8 characters long, contain at 
 password.repeat.not.match = Provided passwords don''t match
 password.changed = Password was changed successfully
 password.incorrect = Provided password is incorrect
+change.random.username = Your username was randomly selected. To change it, please go to your account details
 
 home.title = Play that
 account.details.title = Account details

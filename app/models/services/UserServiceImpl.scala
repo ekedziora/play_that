@@ -16,6 +16,7 @@ import provider.CustomSocialProfile
 import utils.{DateTimeUtils, ValidationException}
 
 import scala.concurrent.Future
+import scala.util.Random
 
 /**
  * Handles actions to users.
@@ -63,7 +64,7 @@ class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHashe
     userDAO.save(user)
   }
 
-  override def saveOrUpdateUser(profile: CustomSocialProfile) = {
+  override def saveOrUpdateUser(profile: CustomSocialProfile): Future[(User, Boolean)] = {
     userDAO.find(profile.loginInfo).flatMap {
       case Some(user) => // Update user with profile
         userDAO.save(user.copy(
@@ -73,19 +74,33 @@ class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHashe
           avatarURL = profile.avatarURL,
           birthDate = profile.birthday.flatMap(DateTimeUtils.parseLocalDate),
           gender = profile.gender.flatMap(Gender.fromProfile)
-        ))
+        )).map(user => (user, false))
       case None => // Insert a new user
-        userDAO.save(User(
-          userID = UUID.randomUUID(),
-          loginInfo = profile.loginInfo,
-          username = "",
-          firstName = profile.firstName,
-          lastName = profile.lastName,
-          email = profile.email,
-          avatarURL = profile.avatarURL,
-          birthDate = profile.birthday.flatMap(DateTimeUtils.parseLocalDate),
-          gender = profile.gender.flatMap(Gender.fromProfile)
-        ))
+        (for {
+          username <- createRandomUniqueUsername
+          user <- userDAO.save(User(
+            userID = UUID.randomUUID(),
+            loginInfo = profile.loginInfo,
+            username = username,
+            firstName = profile.firstName,
+            lastName = profile.lastName,
+            email = profile.email,
+            avatarURL = profile.avatarURL,
+            birthDate = profile.birthday.flatMap(DateTimeUtils.parseLocalDate),
+            gender = profile.gender.flatMap(Gender.fromProfile)
+          ))
+        } yield user)
+          .map { user => (user, true)}
+    }
+  }
+
+  override def createRandomUniqueUsername = {
+    userDAO.getAllUsernames.map { usernames =>
+        var randomString = ""
+        do {
+          randomString = Random.alphanumeric.take(10).mkString
+        } while (usernames.contains(randomString))
+        randomString
     }
   }
 }
