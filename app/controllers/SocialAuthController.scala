@@ -6,12 +6,14 @@ import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
+import com.mohiva.play.silhouette.impl.exceptions.AccessDeniedException
 import com.mohiva.play.silhouette.impl.providers._
 import models.User
 import models.services.UserService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Action
+import provider.CustomSocialProfileBuilder
 import utils.ViewUtils
 
 import scala.concurrent.Future
@@ -41,7 +43,7 @@ class SocialAuthController @Inject() (
    */
   def authenticate(provider: String) = Action.async { implicit request =>
     (socialProviderRegistry.get[SocialProvider](provider) match {
-      case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
+      case Some(p: SocialProvider with CustomSocialProfileBuilder) =>
         p.authenticate().flatMap {
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
@@ -58,6 +60,8 @@ class SocialAuthController @Inject() (
         }
       case _ => Future.failed(new ProviderException(s"Cannot authenticate with unexpected social provider $provider"))
     }).recover {
+      case ade: AccessDeniedException =>
+        Redirect(routes.ApplicationController.signIn()).flashing(ViewUtils.ErrorFlashKey -> Messages("social.user.denied"))
       case e: ProviderException =>
         logger.error("Unexpected provider error", e)
         Redirect(routes.ApplicationController.signIn()).flashing(ViewUtils.ErrorFlashKey -> Messages("could.not.authenticate"))

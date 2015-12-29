@@ -4,9 +4,9 @@ import java.util.UUID
 
 import com.mohiva.play.silhouette.api.AuthInfo
 import com.mohiva.play.silhouette.api.services.IdentityService
-import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
 import forms.{AccountDetailsEditForm, ChangePasswordForm}
 import models.User
+import provider.CustomSocialProfile
 
 import scala.concurrent.Future
 
@@ -59,5 +59,5 @@ trait UserService extends IdentityService[User] {
    * @param profile The social profile to save.
    * @return The user for whom the profile was saved.
    */
-  def saveOrUpdateUser(profile: CommonSocialProfile): Future[User]
+  def saveOrUpdateUser(profile: CustomSocialProfile): Future[User]
 }
