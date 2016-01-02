@@ -84,4 +84,9 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       Ok(views.html.eventsList(seq, request.identity))
     }
   }
+
+  def deleteEvent(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>
+    eventService.deleteEvent(eventId)
+    Future.successful(Redirect(routes.EventController.showList()).flashing(ViewUtils.InfoFlashKey -> Messages("event.deleted")))
+  }
 }

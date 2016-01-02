@@ -22,6 +22,7 @@ change.password.title = Change password
 event.add.title = Add event
 event.details.title = Event details
 event.edit.title = Edit event
+event.delete.title = Delete event
 sign.up.title = Play that - Sign Up
 sign.in.title = Play that - Sign In
 
@@ -67,16 +68,20 @@ discipline = Discipline
 date.format = YYYY-MM-DD
 date.time.format = YYYY-MM-DD HH:MM
 
+yes = Yes
+no = No
+
 discipline.basketball = Basketball
 discipline.football = Football
 discipline.volleyball = Volleyball
 
 events.look = Look for events
-
+event.delete.message = Are you sure you want to delete {0}?
 events.list.title = Events
 
 event.added = Event added successfully
 event.updated = Event updated successfully
+event.deleted = Event deleted successfully
 account.details.updated = Account details updated successfully
 change.password = Change password
 save = Save

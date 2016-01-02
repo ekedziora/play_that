@@ -15,6 +15,14 @@ import scala.concurrent.Future
  */
 trait UserService extends IdentityService[User] {
 
+  /**
+    * Finds user by email
+    *
+    * @param email user email
+    * @return user with specified id or none if no user was found
+    */
+  def findByEmail(email: String): Future[Option[User]]
+
   def getById(id: UUID): Future[Option[User]]
 
   /**

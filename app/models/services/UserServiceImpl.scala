@@ -24,6 +24,10 @@ import scala.concurrent.Future
 class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHasher, authInfoRepository: AuthInfoRepository)
   extends UserService {
 
+  override def findByEmail(email: String): Future[Option[User]] = {
+    userDAO.findByEmail(email)
+  }
+
   override def getById(id: UUID): Future[Option[User]] = {
     userDAO.find(id)
   }

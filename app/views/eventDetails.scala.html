@@ -1,9 +1,32 @@
+@import b3.vertical.fieldConstructor
 @import utils.{DateTimeUtils, ViewUtils}
 @import views.html.component.flashContainer
 @(event: models.Event, user: models.User)(implicit request: RequestHeader, messages: Messages)
 
 @main(Messages("event.details.title"), Some(user)) {
     <div class="user col-md-6 col-md-offset-3">
+        <div class="modal fade" id="deleteModal" role="dialog">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">@Messages("event.delete.title")</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>@Messages("event.delete.message", event.title)</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-block" data-dismiss="modal">@Messages("no")</button>
+                        @helper.form(routes.EventController.deleteEvent(event.id)) {
+                            @helper.CSRF.formField
+                            @b3.submit('class -> "btn btn-primary btn-block") { @Messages("yes") }
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
         <div class="row data">
             @flashContainer(ViewUtils.InfoFlashKey)
             <div class="col-md-12">
@@ -36,7 +59,10 @@
             </div>
             <hr class="col-md-12" />
             <div class="text-center">
-                <a class="btn btn-info" role="button" href="@routes.EventController.showEditEventPage(event.id)">@Messages("event.edit.title")</a>
+                @if(event.ownerId == user.userID) {
+                    <a class="btn btn-info" role="button" href="@routes.EventController.showEditEventPage(event.id)">@Messages("event.edit.title")</a>
+                    <a class="btn btn-info" role="button" data-toggle="modal" data-target="#deleteModal">@Messages("event.delete.title")</a>
+                }
             </div>
         </div>
     </div>

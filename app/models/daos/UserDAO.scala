@@ -14,6 +14,14 @@ import scala.concurrent.Future
 trait UserDAO {
 
   /**
+    * Finds user by email
+    *
+    * @param email user email
+    * @return user with specified id or none if no user was found
+    */
+  def findByEmail(email: String): Future[Option[User]]
+
+  /**
     * Finds login info by provided user id and provider id
     *
     * @param userId user id

@@ -49,7 +49,7 @@ class SignUpController @Inject() (
       data => {
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
 
-        env.identityService.retrieve(loginInfo).flatMap {
+        userService.findByEmail(data.email).flatMap {
           case Some(_) =>
             val form = SignUpForm.form.fill(data).withGlobalError(Messages("user.exists"))
             Future.successful(BadRequest(views.html.signUp(form)))

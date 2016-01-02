@@ -12,6 +12,10 @@ import scala.concurrent.Future
 
 class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventDao) extends EventService {
 
+  override def deleteEvent(eventId: Long): Future[Int] = {
+    eventDao.deleteEvent(eventId)
+  }
+
   override def getEventsList: Future[Seq[Event]] = {
     eventDao.getAllEvents
   }

@@ -18,6 +18,30 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   import driver.api._
 
+  override def findByEmail(email: String): Future[Option[User]] = {
+    val query = for {
+      dbUser <- slickUsers.filter(_.email === email)
+      dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)
+      dbLoginInfo <- slickLoginInfos.filter(_.id === dbUserLoginInfo.loginInfoId)
+    } yield (dbUser, dbLoginInfo)
+    db.run(query.result.headOption).map { resultOption =>
+      resultOption.map {
+        case (user, loginInfo) =>
+          User(
+            user.userID,
+            LoginInfo(loginInfo.providerID, loginInfo.providerKey),
+            user.username,
+            user.firstName,
+            user.lastName,
+            user.email,
+            user.emailConfirmed,
+            user.gender,
+            user.birthDate,
+            user.avatarURL)
+      }
+    }
+  }
+
   override def findLoginInfoByUserIdAndProviderId(userId: UUID, providerId: String): Future[LoginInfo] = {
     val query = for {
       dbUserLoginInfo <- slickUserLoginInfos if dbUserLoginInfo.userID === userId

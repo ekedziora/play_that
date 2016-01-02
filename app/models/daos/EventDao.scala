@@ -8,6 +8,13 @@ import models.Event
 import scala.concurrent.Future
 
 trait EventDao {
+  /**
+    * Deletes event with specified id
+    *
+    * @param eventId id of event
+    * @return number of affected rows
+    */
+  def deleteEvent(eventId: Long): Future[Int]
 
   def getAllEvents: Future[Seq[Event]]
 

@@ -9,7 +9,19 @@ import scala.concurrent.Future
 
 trait EventService {
 
+  /**
+    * Deletes event with specified id
+    *
+    * @param eventId id of event
+    * @return number of affected rows
+    */
+  def deleteEvent(eventId: Long): Future[Int]
 
+  /**
+    * Gets all events
+    *
+    * @return sequence of all events
+    */
   def getEventsList: Future[Seq[Event]]
 
   /**

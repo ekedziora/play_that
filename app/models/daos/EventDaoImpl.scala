@@ -14,6 +14,11 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
 
   import driver.api._
 
+  override def deleteEvent(eventId: Long): Future[Int] = {
+    val deleteAction = eventsQuery.filter(_.id === eventId).delete
+    db.run(deleteAction)
+  }
+
   override def getAllEvents: Future[Seq[Event]] = {
     val query = eventsQuery join slickUsers on(_.ownerId === _.id) join sportDisciplinesQuery on(_._1.disciplineId === _.id)
     db.run(query.result) map { seq =>
