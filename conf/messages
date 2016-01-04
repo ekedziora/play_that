@@ -70,6 +70,7 @@ date.time.format = YYYY-MM-DD HH:MM
 
 yes = Yes
 no = No
+empty.list = There are no items on list
 
 discipline.basketball = Basketball
 discipline.football = Football

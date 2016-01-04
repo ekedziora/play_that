@@ -15,6 +15,12 @@
         @flashContainer(ViewUtils.ErrorFlashKey)
         @flashContainer(ViewUtils.InfoFlashKey)
 
+        @if(events.isEmpty) {
+            <div class="col-md-6 col-md-offset-3 text-center">
+                @Messages("empty.list")
+            </div>
+        }
+
         @events.map { event =>
             <a class="col-md-3 thumbnail deco-none @{if(event.ownerId != user.userID) "not-active"}" href="@routes.EventController.showEventDetails(event.id)">
                 <img src="@routes.Assets.at("/images/Basketball-Tryouts.jpg")" class="img-responsive">
