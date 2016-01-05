@@ -106,3 +106,11 @@ a.deco-none {
 a.not-active {
     pointer-events: none;
 }
+
+form.form-inline {
+    display: inline;
+}
+
+.no-margin {
+    margin: 0;
+}

@@ -4,13 +4,19 @@ import java.util.UUID
 import javax.inject.Inject
 
 import forms.AddEventForm
-import models.Event
 import models.daos.{DisciplineDao, EventDao}
+import models.{Event, EventWithParticipants}
 import play.api.libs.concurrent.Execution.Implicits._
 
 import scala.concurrent.Future
 
 class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventDao) extends EventService {
+
+  override def addParticipant(eventId: Long, userId: UUID): Future[Boolean] = {
+    eventDao.addParticipant(eventId, userId).map { addedRowsCount =>
+      addedRowsCount > 0
+    }
+  }
 
   override def deleteEvent(eventId: Long): Future[Int] = {
     eventDao.deleteEvent(eventId)
@@ -30,6 +36,10 @@ class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventD
 
   override def saveNewEvent(addEventData: AddEventForm.Data, ownerId: UUID): Future[Long] = {
     eventDao.insertNewEvent(addEventData, ownerId)
+  }
+
+  override def getEventWithParticipants(eventId: Long): Future[EventWithParticipants] = {
+    eventDao.getEventWithParticipants(eventId)
   }
 
   override def getEventDetails(eventId: Long): Future[Event] = {

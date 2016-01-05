@@ -22,7 +22,7 @@
         }
 
         @events.map { event =>
-            <a class="col-md-3 thumbnail deco-none @{if(event.ownerId != user.userID) "not-active"}" href="@routes.EventController.showEventDetails(event.id)">
+            <a class="col-md-3 thumbnail deco-none" href="@routes.EventController.showEventDetails(event.id)">
                 <img src="@routes.Assets.at("/images/Basketball-Tryouts.jpg")" class="img-responsive">
                 <div class="row text-center">
                     <h3>@event.title</h3>

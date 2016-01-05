@@ -1,7 +1,7 @@
 @import b3.vertical.fieldConstructor
 @import utils.{DateTimeUtils, ViewUtils}
 @import views.html.component.flashContainer
-@(event: models.Event, user: models.User)(implicit request: RequestHeader, messages: Messages)
+@(event: models.EventWithParticipants, user: models.User)(implicit request: RequestHeader, messages: Messages)
 
 @main(Messages("event.details.title"), Some(user)) {
     <div class="user col-md-6 col-md-offset-3">
@@ -56,12 +56,38 @@
                     <p class="col-md-6"><strong>@Messages("discipline"):</strong></p>
                     <p class="col-md-6">@Messages(event.disciplineNameKey)</p>
                 </div>
+                <div class="row col-md-12"></div>
+                <div class="row">
+                    <h4 class="text-center">@Messages("participants") @if(event.maxParticipants.isDefined) { (@event.participantsCount/@event.maxParticipants) }</h4>
+                    <ul class="list-group list-unstyled table-bordered">
+                        @event.participants.map { participant =>
+                            <li class="list-group-item">
+                                @if(event.isOwner(user)) {
+                                    @participant.fullName.getOrElse(participant.username)
+                                } else {
+                                    @participant.username
+                                }
+                            </li>
+                        }
+                        @if(event.participants.isEmpty) {
+                            <li class="list-group-item text-center">
+                                @Messages("participants.empty")
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
             <hr class="col-md-12" />
             <div class="text-center">
                 @if(event.ownerId == user.userID) {
                     <a class="btn btn-info" role="button" href="@routes.EventController.showEditEventPage(event.id)">@Messages("event.edit.title")</a>
                     <a class="btn btn-info" role="button" data-toggle="modal" data-target="#deleteModal">@Messages("event.delete.title")</a>
+                }
+                @if(!event.isParticipant(user) && event.isNotFull) {
+                    @helper.form(routes.EventController.joinEvent(event.id), 'class -> "form-inline") {
+                        @helper.CSRF.formField
+                        <input type="submit" class="btn btn-info no-margin" value="@Messages("join")"/>
+                    }
                 }
             </div>
         </div>

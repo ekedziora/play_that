@@ -25,7 +25,8 @@
     "id" SERIAL NOT NULL PRIMARY KEY,
     "event_id" BIGINT NOT NULL,
     "user_id" UUID NOT NULL,
-    CONSTRAINT "fk_event_participants_event" FOREIGN KEY ("event_id") REFERENCES "events"("id")
+    CONSTRAINT "fk_event_participants_event" FOREIGN KEY ("event_id") REFERENCES "events"("id"),
+    CONSTRAINT "fk_event_participants_user" FOREIGN KEY ("user_id") REFERENCES "user"("userID")
   );
 
   # --- !Downs

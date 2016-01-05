@@ -3,11 +3,21 @@ package models.daos
 import java.util.UUID
 
 import forms.AddEventForm
-import models.Event
+import models.{Event, EventWithParticipants}
 
 import scala.concurrent.Future
 
 trait EventDao {
+
+  /**
+    * Adds participant to event
+    *
+    * @param eventId event id
+    * @param userId user id
+    * @return number of added participants
+    */
+  def addParticipant(eventId: Long, userId: UUID): Future[Int]
+
   /**
     * Deletes event with specified id
     *
@@ -34,6 +44,8 @@ trait EventDao {
     * @return event details
     */
   def getEventDetails(eventId: Long): Future[Event]
+
+  def getEventWithParticipants(eventId: Long): Future[EventWithParticipants]
 
   /**
     * Gets id of event owner by specified event id

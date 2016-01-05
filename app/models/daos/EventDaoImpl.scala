@@ -4,15 +4,24 @@ import java.util.UUID
 import javax.inject.Inject
 
 import forms.AddEventForm
-import models.Event
+import models.{Event, EventWithParticipants, Participant}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, _}
+import scala.concurrent.duration._
 
 class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvider) extends EventDao with DAOSlick {
 
   import driver.api._
+
+  override def addParticipant(eventId: Long, userId: UUID): Future[Int] = {
+    val insertAction = eventParticipantsQuery.map { participants =>
+      (participants.eventId, participants.userId)
+    } += ((eventId, userId))
+
+    db.run(insertAction)
+  }
 
   override def deleteEvent(eventId: Long): Future[Int] = {
     val deleteAction = eventsQuery.filter(_.id === eventId).delete
@@ -51,6 +60,30 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
         new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
           dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey)
       } getOrElse(throw utils.NotFoundException())
+    }
+  }
+
+  override def getEventWithParticipants(eventId: Long): Future[EventWithParticipants] = {
+    val query = eventsQuery join slickUsers on (_.ownerId === _.id) join sportDisciplinesQuery on (_._1.disciplineId === _.id)
+
+    val future = db.run(query.result.headOption)
+
+    Await.result(future, 500.millis).map { tuple =>
+      val q2 = eventParticipantsQuery.filter(_.eventId === tuple._1._1.id) join slickUsers on (_.userId === _.id)
+      db.run(q2.result).map { participantsSeq =>
+        val dbEvent = tuple._1._1
+        val dbUser = tuple._1._2
+        val dbDiscipline = tuple._2
+        val participants = participantsSeq.map { participant =>
+          val dbParticipant = participant._1
+          val dbUserParticipant = participant._2
+          new Participant(dbParticipant.id, dbUserParticipant.userID, dbUserParticipant.username, dbUserParticipant.getFullName)
+        }
+        new EventWithParticipants(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
+          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, participants)
+      }
+    }.getOrElse {
+      throw utils.NotFoundException()
     }
   }
 

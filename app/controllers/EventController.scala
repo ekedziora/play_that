@@ -37,8 +37,8 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
     )
   }
 
-  def showEventDetails(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>
-    eventService.getEventDetails(eventId).map { event =>
+  def showEventDetails(eventId: Long) = SecuredAction.async { implicit request =>
+    eventService.getEventWithParticipants(eventId).map { event =>
       Ok(views.html.eventDetails(event, request.identity))
     } recoverWith {
       PartialFunction {
@@ -88,5 +88,15 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
   def deleteEvent(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>
     eventService.deleteEvent(eventId)
     Future.successful(Redirect(routes.EventController.showList()).flashing(ViewUtils.InfoFlashKey -> Messages("event.deleted")))
+  }
+
+  def joinEvent(eventId: Long) = SecuredAction.async { implicit request =>
+    eventService.addParticipant(eventId, request.identity.userID).flatMap { wasAdded =>
+      if (wasAdded) {
+        Future.successful(Redirect(routes.EventController.showEventDetails(eventId)))
+      } else {
+        Future.successful(Redirect(routes.EventController.showEventDetails(eventId)).flashing(ViewUtils.ErrorFlashKey -> Messages("event.not.joined")))
+      }
+    }
   }
 }

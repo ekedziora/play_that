@@ -153,6 +153,7 @@ trait DBTableDefinitions extends CustomTypes {
     def ownerFk = foreignKey("fk_event_owner", ownerId, slickUsers)(_.id)
     def disciplineFk = foreignKey("fk_event_discipline", disciplineId, sportDisciplinesQuery)(_.id)
     def * = (id, title, description, dateTime, maxParticipants, ownerId, disciplineId) <> (DbEvent.tupled, DbEvent.unapply)
+    def participants = eventParticipantsQuery.filter(_.eventId === id).flatMap(_.userFk)
   }
 
   case class DbEventParticipant(id: Long, eventId: Long, userId: UUID)
@@ -175,6 +176,7 @@ trait DBTableDefinitions extends CustomTypes {
   val slickOAuth2Infos = TableQuery[OAuth2Infos]
   val sportDisciplinesQuery = TableQuery[SportDisciplinesTable]
   val eventsQuery = TableQuery[EventsTable]
+  val eventParticipantsQuery = TableQuery[EventParticipants]
   
   // queries used in multiple places
   def loginInfoQuery(loginInfo: LoginInfo) = 

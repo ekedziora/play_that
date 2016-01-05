@@ -3,11 +3,20 @@ package models.services
 import java.util.UUID
 
 import forms.AddEventForm
-import models.Event
+import models.{Event, EventWithParticipants}
 
 import scala.concurrent.Future
 
 trait EventService {
+
+  /**
+    * Add user with specified id to given event with id
+    *
+    * @param eventId event id
+    * @param userId user id
+    * @return true if participant was added, false otherwise
+    */
+  def addParticipant(eventId: Long, userId: UUID): Future[Boolean]
 
   /**
     * Deletes event with specified id
@@ -47,6 +56,8 @@ trait EventService {
     * @return event details
     */
   def getEventDetails(eventId: Long): Future[Event]
+
+  def getEventWithParticipants(eventId: Long): Future[EventWithParticipants]
 
   /**
     * Gets id of event owner by specified event id
