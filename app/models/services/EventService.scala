@@ -10,13 +10,22 @@ import scala.concurrent.Future
 trait EventService {
 
   /**
-    * Add user with specified id to given event with id
+    * Adds user with specified id to given event with id
     *
     * @param eventId event id
     * @param userId user id
     * @return true if participant was added, false otherwise
     */
   def addParticipant(eventId: Long, userId: UUID): Future[Boolean]
+
+  /**
+    * Removes user with specified id from event with given id
+    *
+    * @param eventId event id
+    * @param userId user id
+    * @return true if participant was removed, false otherwise
+    */
+  def removeParticipant(eventId: Long, userId: UUID): Future[Boolean]
 
   /**
     * Deletes event with specified id

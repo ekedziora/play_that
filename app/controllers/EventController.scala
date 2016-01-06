@@ -99,4 +99,14 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       }
     }
   }
+
+  def unjoinEvent(eventId: Long) = SecuredAction.async {implicit request =>
+    eventService.removeParticipant(eventId, request.identity.userID).flatMap { wasRemoved =>
+      if (wasRemoved) {
+        Future.successful(Redirect(routes.EventController.showEventDetails(eventId)))
+      } else {
+        Future.successful(Redirect(routes.EventController.showEventDetails(eventId)).flashing(ViewUtils.ErrorFlashKey -> Messages("event.not.unjoined")))
+      }
+    }
+  }
 }

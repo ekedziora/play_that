@@ -18,6 +18,12 @@ class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventD
     }
   }
 
+  override def removeParticipant(eventId: Long, userId: UUID): Future[Boolean] = {
+    eventDao.removeParticipant(eventId, userId).map { removedRowsCount =>
+      removedRowsCount > 0
+    }
+  }
+
   override def deleteEvent(eventId: Long): Future[Int] = {
     eventDao.deleteEvent(eventId)
   }

@@ -19,6 +19,15 @@ trait EventDao {
   def addParticipant(eventId: Long, userId: UUID): Future[Int]
 
   /**
+    * Remove participant from event
+    *
+    * @param eventId event id
+    * @param userId user id
+    * @return number of removed participants
+    */
+  def removeParticipant(eventId: Long, userId: UUID): Future[Int]
+
+  /**
     * Deletes event with specified id
     *
     * @param eventId id of event

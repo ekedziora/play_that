@@ -89,6 +89,12 @@
                         <input type="submit" class="btn btn-info no-margin" value="@Messages("join")"/>
                     }
                 }
+                @if(event.isParticipant(user)) {
+                    @helper.form(routes.EventController.unjoinEvent(event.id), 'class -> "form-inline") {
+                        @helper.CSRF.formField
+                        <input type="submit" class="btn btn-info no-margin" value="@Messages("unjoin")"/>
+                    }
+                }
             </div>
         </div>
     </div>

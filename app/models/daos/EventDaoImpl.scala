@@ -8,8 +8,8 @@ import models.{Event, EventWithParticipants, Participant}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.{Future, _}
 import scala.concurrent.duration._
+import scala.concurrent.{Future, _}
 
 class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvider) extends EventDao with DAOSlick {
 
@@ -21,6 +21,12 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
     } += ((eventId, userId))
 
     db.run(insertAction)
+  }
+
+  override def removeParticipant(eventId: Long, userId: UUID): Future[Int] = {
+    val deleteAction = eventParticipantsQuery.filter(_.userId === userId).filter(_.eventId === eventId).delete
+
+    db.run(deleteAction)
   }
 
   override def deleteEvent(eventId: Long): Future[Int] = {

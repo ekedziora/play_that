@@ -24,6 +24,7 @@ POST        /event/:eventId/edit             controllers.EventController.updateE
 POST        /event/:eventId/delete           controllers.EventController.deleteEvent(eventId: Long)
 GET         /events                          controllers.EventController.showList
 POST        /event/:eventId/join             controllers.EventController.joinEvent(eventId: Long)
+POST        /event/:eventId/unjoin           controllers.EventController.unjoinEvent(eventId: Long)
 
 
 # Map static resources from the /public folder to the /assets URL path

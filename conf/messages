@@ -72,6 +72,7 @@ date.time.format = YYYY-MM-DD HH:MM
 yes = Yes
 no = No
 join = Join
+unjoin = Unjoin
 empty.list = There are no items on list
 participants.empty = There are no participants
 
@@ -87,6 +88,7 @@ event.added = Event added successfully
 event.updated = Event updated successfully
 event.deleted = Event deleted successfully
 event.not.joined = Joining event was unsuccessful
+event.not.unjoined = Unjoining event was unsuccessful
 account.details.updated = Account details updated successfully
 change.password = Change password
 save = Save
