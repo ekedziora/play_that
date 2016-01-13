@@ -70,7 +70,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
   }
 
   override def getEventWithParticipants(eventId: Long): Future[EventWithParticipants] = {
-    val query = eventsQuery join slickUsers on (_.ownerId === _.id) join sportDisciplinesQuery on (_._1.disciplineId === _.id)
+    val query = eventsQuery.filter(_.id === eventId) join slickUsers on (_.ownerId === _.id) join sportDisciplinesQuery on (_._1.disciplineId === _.id)
 
     val future = db.run(query.result.headOption)
 

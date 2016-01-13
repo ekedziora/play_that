@@ -3,6 +3,7 @@ package models.daos
 import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
 
+import com.google.common.base.Joiner
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo
 import models.{Gender, User}
@@ -29,11 +30,9 @@ trait DBTableDefinitions extends CustomTypes {
       this(user.userID, user.username, user.firstName, user.lastName, user.email, user.emailConfirmed, user.gender, user.birthDate, user.avatarURL)
     }
 
-    def getFullName: Option[String] = {
-      firstName.map { firstNameVal =>
-        firstNameVal + lastName.getOrElse("")
-      } orElse(lastName)
-    }
+    def getFullName: Option[String] = firstName.map { firstNameVal =>
+      Joiner.on(" ").join(firstNameVal, lastName.getOrElse(""))
+    } orElse lastName
   }
 
   class Users(tag: Tag) extends Table[DBUser](tag, "user") {
