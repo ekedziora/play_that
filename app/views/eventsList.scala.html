@@ -1,15 +1,31 @@
+@import forms.ListFiltersForm
 @import utils.DateTimeUtils.formatLocalDateTime
 @import utils.ViewUtils
 @import views.html.component.flashContainer
-@(events: Seq[Event], user: User)(implicit request: RequestHeader, messages: Messages)
+@(events: Seq[Event], filters: Form[ListFiltersForm.Data], disciplineOptions: Seq[(String, String)], user: User)(implicit request: RequestHeader, messages: Messages)
+
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-2", "col-md-8") }
 
 @main(Messages("events.list.title"), Some(user)) {
+    <script type="text/javascript" src="@routes.Assets.at("scripts/eventListDateTimePicker.js")"></script>
 
     <div>
         <div class="row">
             <h4 class="col-md-8">@Messages("events.list.title")</h4>
             <a class="btn btn-info col-md-offset-3 col-md-1" role="button" href="@routes.EventController.showAddEventPage()">@Messages("event.add.title")</a>
             <hr class="col-md-12" />
+        </div>
+
+        <div class="row">
+            @b3.form(action = routes.EventController.showList()) {
+                @b3.text(filters("title"), '_label -> Messages("title"))
+                @b3.text(filters("dateTimeFrom"), '_label -> Messages("from"), 'placeholder -> Messages("date.time.format"))
+                @b3.text(filters("dateTimeTo"), '_label -> Messages("to"), 'placeholder -> Messages("date.time.format"))
+                @b3.select(filters("disciplineId"), disciplineOptions.map {case (id, nameKey) => (id, Messages(nameKey))},
+                    '_label -> Messages("discipline"))
+                @b3.checkbox(filters("spotsAvailable"), '_label -> Messages("spots.available"))
+                @b3.submit('class -> "btn btn-block"){ @Messages("search") }
+            }
         </div>
 
         @flashContainer(ViewUtils.ErrorFlashKey)

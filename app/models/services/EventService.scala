@@ -2,7 +2,7 @@ package models.services
 
 import java.util.UUID
 
-import forms.AddEventForm
+import forms.{AddEventForm, ListFiltersForm}
 import models.{Event, EventWithParticipants}
 
 import scala.concurrent.Future
@@ -40,14 +40,21 @@ trait EventService {
     *
     * @return sequence of all events
     */
-  def getEventsList: Future[Seq[Event]]
+  def getEventsList(filters: ListFiltersForm.Data): Future[Seq[Event]]
 
   /**
-    * Gets all discipline as options for option dropdown view element
+    * Gets all disciplines as options for option dropdown view element
     *
     * @return sequence of tuples containing description id and it's name key for messages api
     */
   def getDisciplineOptions: Future[Seq[(String, String)]]
+
+  /**
+    * Gets all disciplines as options and all option for option dropdown view element
+    *
+    * @return sequence of tuples containing description id and it's name key for messages api
+    */
+  def getDisciplineOptionsForFilter: Future[Seq[(String, String)]]
 
   /**
     * Saves new event based on data and ownerId

@@ -3,7 +3,7 @@ package models.daos
 import java.util.UUID
 import javax.inject.Inject
 
-import forms.AddEventForm
+import forms.{AddEventForm, ListFiltersForm}
 import models.{Event, EventWithParticipants, Participant}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -43,6 +43,39 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
         val dbDiscipline = tuple._2
         new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
           dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey)
+      }
+    }
+  }
+
+  override def getEventsList(filters: ListFiltersForm.Data): Future[Seq[Event]] = {
+    val query = eventsQuery.filter { event =>
+      List(
+        filters.disciplineId.map(event.disciplineId === _),
+        filters.title.map(title => event.title like s"%$title%"),
+        filters.spotsAvailable.map(_ => event.eventParticipants.countDistinct < event.maxParticipants.getOrElse(Int.MaxValue))
+      ).collect({case Some(criteria)  => criteria})
+        .reduceLeftOption(_ && _)
+        .getOrElse(true: Rep[Boolean])
+    } join slickUsers on(_.ownerId === _.id) join sportDisciplinesQuery on(_._1.disciplineId === _.id)
+
+    db.run(query.result) map { events => {
+        events.map { tuple =>
+          val dbEvent = tuple._1._1
+          val dbUser = tuple._1._2
+          val dbDiscipline = tuple._2
+          new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
+            dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey)
+        }.filter { event =>
+          val fromCondition = filters.dateTimeFrom.map { from =>
+            event.dateTime.isAfter(from)
+          }.getOrElse(true)
+
+          val toCondition = filters.dateTimeTo.map { to =>
+            event.dateTime.isBefore(to)
+          }.getOrElse(true)
+
+          fromCondition && toCondition
+        }
       }
     }
   }

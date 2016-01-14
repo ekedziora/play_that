@@ -3,7 +3,7 @@ package models.services
 import java.util.UUID
 import javax.inject.Inject
 
-import forms.AddEventForm
+import forms.{AddEventForm, ListFiltersForm}
 import models.daos.{DisciplineDao, EventDao}
 import models.{Event, EventWithParticipants}
 import play.api.libs.concurrent.Execution.Implicits._
@@ -28,8 +28,8 @@ class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventD
     eventDao.deleteEvent(eventId)
   }
 
-  override def getEventsList: Future[Seq[Event]] = {
-    eventDao.getAllEvents
+  override def getEventsList(filters: ListFiltersForm.Data): Future[Seq[Event]] = {
+    eventDao.getEventsList(filters)
   }
 
   override def getDisciplineOptions: Future[Seq[(String, String)]] = {
@@ -37,6 +37,14 @@ class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventD
       optionsSequence.map { case (id, name) =>
         (id.toString, name)
       }
+    }
+  }
+
+  override def getDisciplineOptionsForFilter: Future[Seq[(String, String)]] = {
+    disciplineDAO.getDisciplinesOptions.map { optionsSequence =>
+      optionsSequence.map { case (id, name) =>
+        (id.toString, name)
+      }.+:(("", "all"))
     }
   }
 

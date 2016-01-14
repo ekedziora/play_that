@@ -153,6 +153,7 @@ trait DBTableDefinitions extends CustomTypes {
     def disciplineFk = foreignKey("fk_event_discipline", disciplineId, sportDisciplinesQuery)(_.id)
     def * = (id, title, description, dateTime, maxParticipants, ownerId, disciplineId) <> (DbEvent.tupled, DbEvent.unapply)
     def participants = eventParticipantsQuery.filter(_.eventId === id).flatMap(_.userFk)
+    def eventParticipants = eventParticipantsQuery.filter(_.eventId === id)
   }
 
   case class DbEventParticipant(id: Long, eventId: Long, userId: UUID)

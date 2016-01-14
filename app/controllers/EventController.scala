@@ -4,7 +4,7 @@ import authorization.AuthorizeEventByOwner
 import com.google.inject.Inject
 import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
-import forms.AddEventForm
+import forms.{AddEventForm, ListFiltersForm}
 import models.User
 import models.services.EventService
 import play.api.i18n.{Messages, MessagesApi}
@@ -80,9 +80,21 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
   }
 
   def showList = SecuredAction.async { implicit request =>
-    eventService.getEventsList.map { seq =>
-      Ok(views.html.eventsList(seq, request.identity))
-    }
+    ListFiltersForm.form.bindFromRequest.fold (
+      formWithErrors => {
+        eventService.getDisciplineOptionsForFilter.map { optionsSeq =>
+          BadRequest(views.html.eventsList(Seq(), formWithErrors, optionsSeq, request.identity))
+        }
+      },
+      data => {
+        for {
+          options <- eventService.getDisciplineOptionsForFilter
+          events <- eventService.getEventsList(data)
+        } yield {
+          Ok(views.html.eventsList(events, ListFiltersForm.form.fill(data), options, request.identity))
+        }
+      }
+    )
   }
 
   def deleteEvent(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>

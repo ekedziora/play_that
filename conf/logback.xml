@@ -18,7 +18,9 @@
     <logger name="play" level="INFO" />
     <logger name="application" level="INFO" />
 
-    <root level="DEBUG">
+    <logger name="scala.slick" level="DEBUG" />
+
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 

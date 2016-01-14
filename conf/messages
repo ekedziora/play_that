@@ -73,6 +73,11 @@ yes = Yes
 no = No
 join = Join
 unjoin = Unjoin
+from = From
+to = To
+all = All
+spots.available = Spots available
+search = Search
 empty.list = There are no items on list
 participants.empty = There are no participants
 

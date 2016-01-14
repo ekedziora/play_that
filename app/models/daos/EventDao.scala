@@ -2,7 +2,7 @@ package models.daos
 
 import java.util.UUID
 
-import forms.AddEventForm
+import forms.{AddEventForm, ListFiltersForm}
 import models.{Event, EventWithParticipants}
 
 import scala.concurrent.Future
@@ -35,7 +35,20 @@ trait EventDao {
     */
   def deleteEvent(eventId: Long): Future[Int]
 
+  /**
+    * Gets all saved events
+    *
+    * @return all saved events
+    */
   def getAllEvents: Future[Seq[Event]]
+
+  /**
+    * Gets events filtered by specified filters
+    *
+    * @param filters filters for events list
+    * @return sequence of filtered events
+    */
+  def getEventsList(filters: ListFiltersForm.Data): Future[Seq[Event]]
 
   /**
     * Inserts new event
