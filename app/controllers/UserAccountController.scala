@@ -38,11 +38,9 @@ class UserAccountController @Inject() (
         userService.updateAccountDetails(data, request.identity.userID).map { status =>
           Redirect(routes.UserAccountController.showAccountDetails).flashing(ViewUtils.InfoFlashKey -> Messages("account.details.updated"))
         }.recoverWith {
-          PartialFunction {
-            case ve: ValidationException =>
-              val form = AccountDetailsEditForm.form.fill(data).withGlobalError(ve.getMessageForView)
-              Future.successful(BadRequest(views.html.accountDetailsEdit(form, request.identity)))
-          }
+          case ve: ValidationException =>
+            val form = AccountDetailsEditForm.form.fill(data).withGlobalError(ve.getMessageForView)
+            Future.successful(BadRequest(views.html.accountDetailsEdit(form, request.identity)))
         }
       }
     )
@@ -57,13 +55,11 @@ class UserAccountController @Inject() (
       formWithErrors => Future.successful(BadRequest(views.html.changePassword(formWithErrors, request.identity))),
       data =>
         userService.changePassword(data, request.identity.userID).map { status =>
-          Redirect(routes.UserAccountController.showAccountDetails).flashing(ViewUtils.InfoFlashKey -> Messages("password.changed"))
+          Redirect(routes.UserAccountController.showAccountDetails()).flashing(ViewUtils.InfoFlashKey -> Messages("password.changed"))
         }.recoverWith {
-          PartialFunction {
-            case ve: ValidationException =>
-              val form = ChangePasswordForm.form.fill(data).withGlobalError(ve.getMessageForView)
-              Future.successful(BadRequest(views.html.changePassword(form, request.identity)))
-          }
+          case ve: ValidationException =>
+            val form = ChangePasswordForm.form.fill(data).withGlobalError(ve.getMessageForView)
+            Future.successful(BadRequest(views.html.changePassword(form, request.identity)))
         }
     )
   }

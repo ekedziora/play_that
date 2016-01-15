@@ -72,11 +72,9 @@ class SignUpController @Inject() (
               Mailer.welcome(user, link = routes.SignUpController.signUp(tokenId).absoluteURL())
               Ok(views.html.almostSignedUp(user))
             }).recoverWith {
-              PartialFunction {
-                case ve: ValidationException =>
-                  val form = SignUpForm.form.fill(data).withGlobalError(ve.getMessageForView)
-                  Future.successful(BadRequest(views.html.signUp(form)))
-              }
+              case ve: ValidationException =>
+                val form = SignUpForm.form.fill(data).withGlobalError(ve.getMessageForView)
+                Future.successful(BadRequest(views.html.signUp(form)))
             }
         }
       }

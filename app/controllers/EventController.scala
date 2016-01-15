@@ -41,9 +41,7 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
     eventService.getEventWithParticipants(eventId).map { event =>
       Ok(views.html.eventDetails(event, request.identity))
     } recoverWith {
-      PartialFunction {
-        case nfe: NotFoundException => Future.successful(ControllerUtils.getDefaultNotFoundResponse)
-      }
+      case nfe: NotFoundException => Future.successful(ControllerUtils.getDefaultNotFoundResponse)
     }
   }
 
@@ -58,9 +56,7 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       val form = AddEventForm.form.fill(new AddEventForm.Data(event))
       Ok(views.html.editEvent(eventId, form, options, request.identity))
     }).recoverWith {
-      PartialFunction {
-        case nfe: NotFoundException => Future.successful(ControllerUtils.getDefaultNotFoundResponse)
-      }
+      case nfe: NotFoundException => Future.successful(ControllerUtils.getDefaultNotFoundResponse)
     }
   }
 
