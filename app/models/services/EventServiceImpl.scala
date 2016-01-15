@@ -7,6 +7,7 @@ import forms.{AddEventForm, ListFiltersForm}
 import models.daos.{DisciplineDao, EventDao}
 import models.{Event, EventWithParticipants}
 import play.api.libs.concurrent.Execution.Implicits._
+import utils.ValidationException
 
 import scala.concurrent.Future
 
@@ -65,7 +66,17 @@ class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventD
   }
 
   override def updateEvent(eventId: Long, eventData: AddEventForm.Data): Future[Int] = {
-    eventDao.updateEvent(eventId, eventData)
+    eventData.maxParticipants.map { maxParticipants =>
+      eventDao.getNumberOfParticipants(eventId).flatMap { participantsCount =>
+        if (participantsCount > maxParticipants) {
+          Future.failed(ValidationException.createWithValidationMessageKey("participants.number.over.max"))
+        } else {
+          eventDao.updateEvent(eventId, eventData)
+        }
+      }
+    } getOrElse {
+      eventDao.updateEvent(eventId, eventData)
+    }
   }
 
 }

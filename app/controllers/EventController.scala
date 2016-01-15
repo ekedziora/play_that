@@ -9,7 +9,7 @@ import models.User
 import models.services.EventService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
-import utils.{ControllerUtils, NotFoundException, ViewUtils}
+import utils.{ControllerUtils, NotFoundException, ValidationException, ViewUtils}
 
 import scala.concurrent.Future
 
@@ -74,6 +74,12 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       data => {
         eventService.updateEvent(eventId, data).map { updatedCount =>
           Redirect(routes.EventController.showEventDetails(eventId)).flashing(ViewUtils.InfoFlashKey -> Messages("event.updated"))
+        }.recoverWith {
+          case ve: ValidationException =>
+            eventService.getDisciplineOptions.flatMap { options =>
+              val form = AddEventForm.form.fill(data).withGlobalError(ve.getMessageForView)
+              Future.successful(BadRequest(views.html.editEvent(eventId, form, options, request.identity)))
+            }
         }
       }
     )

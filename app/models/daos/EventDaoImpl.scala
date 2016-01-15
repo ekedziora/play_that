@@ -15,6 +15,11 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
 
   import driver.api._
 
+  override def getNumberOfParticipants(eventId: Long): Future[Int] = {
+    val query = eventParticipantsQuery.filter(_.eventId === eventId).length
+    db.run(query.result)
+  }
+
   override def addParticipant(eventId: Long, userId: UUID): Future[Int] = {
     val insertAction = eventParticipantsQuery.map { participants =>
       (participants.eventId, participants.userId)

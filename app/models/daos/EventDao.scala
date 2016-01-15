@@ -10,6 +10,14 @@ import scala.concurrent.Future
 trait EventDao {
 
   /**
+    * Gets number of event participants
+    *
+    * @param eventId event id
+    * @return number of participants for event
+    */
+  def getNumberOfParticipants(eventId: Long): Future[Int]
+
+  /**
     * Adds participant to event
     *
     * @param eventId event id
