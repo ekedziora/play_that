@@ -15,13 +15,13 @@ import com.mohiva.play.silhouette.impl.services._
 import com.mohiva.play.silhouette.impl.util._
 import models.User
 import models.daos._
-import models.services._
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.WSClient
+import service._
 import utils.{MailService, MailServiceImpl}
 
 /**

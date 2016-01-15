@@ -1,4 +1,4 @@
-package models.services
+package service
 
 import java.util.UUID
 

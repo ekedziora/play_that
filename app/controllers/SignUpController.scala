@@ -11,11 +11,11 @@ import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
 import forms.SignUpForm
-import models.services.{MailTokenService, UserService}
 import models.{User, UserMailToken}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Action
+import service.{MailTokenService, UserService}
 import utils._
 
 import scala.concurrent.Future

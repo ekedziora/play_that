@@ -6,9 +6,9 @@ import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import forms.{AddEventForm, ListFiltersForm}
 import models.User
-import models.services.EventService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
+import service.EventService
 import utils.{ControllerUtils, NotFoundException, ValidationException, ViewUtils}
 
 import scala.concurrent.Future

@@ -8,9 +8,9 @@ import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
 import forms.AccountDetailsEditForm.Data
 import forms.{AccountDetailsEditForm, ChangePasswordForm}
 import models.User
-import models.services.UserService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
+import service.UserService
 import utils.{ValidationException, ViewUtils}
 
 import scala.concurrent.Future

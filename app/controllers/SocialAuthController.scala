@@ -8,10 +8,10 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers._
 import models.User
-import models.services.UserService
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Action
+import service.UserService
 import utils.ViewUtils
 
 import scala.concurrent.Future
