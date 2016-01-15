@@ -36,7 +36,7 @@ class UserAccountController @Inject() (
       formWithErrors => Future.successful(BadRequest(views.html.accountDetailsEdit(formWithErrors, request.identity))),
       data => {
         userService.updateAccountDetails(data, request.identity.userID).map { status =>
-          Redirect(routes.UserAccountController.showAccountDetails).flashing(ViewUtils.InfoFlashKey -> Messages("account.details.updated"))
+          Redirect(routes.UserAccountController.showAccountDetails()).flashing(ViewUtils.InfoFlashKey -> Messages("account.details.updated"))
         }.recoverWith {
           case ve: ValidationException =>
             val form = AccountDetailsEditForm.form.fill(data).withGlobalError(ve.getMessageForView)
