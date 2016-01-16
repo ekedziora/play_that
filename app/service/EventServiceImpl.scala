@@ -3,15 +3,35 @@ package service
 import java.util.UUID
 import javax.inject.Inject
 
+import forms.ParticipantsPresenceForm.ParticipantPresence
 import forms.{AddEventForm, ListFiltersForm}
 import models.daos.{DisciplineDao, EventDao}
-import models.{Event, EventWithParticipants}
+import models.{Event, EventWithParticipants, ParticipantsPresence}
 import play.api.libs.concurrent.Execution.Implicits._
 import utils.ValidationException
 
 import scala.concurrent.Future
 
 class EventServiceImpl @Inject() (disciplineDAO: DisciplineDao, eventDao: EventDao) extends EventService {
+
+  override def savePresenceReport(eventId: Long, participantsPresence: List[ParticipantPresence]): Future[Int] = {
+    val presenceMap = participantsPresence.groupBy(_.present).mapValues { presences =>
+      presences.map { presence =>
+        presence.userId
+      }
+    }
+
+    eventDao.updateEventPresenceReported(eventId, presenceReported = true).flatMap { updatedEventsCount =>
+      val futures = presenceMap.map { case (present, usersIds) =>
+        eventDao.updateParticipantsPresence(eventId, usersIds, present)
+      }
+      Future.sequence(futures).map(_.sum)
+    }
+  }
+
+  override def getParticipantsPresence(eventId: Long): Future[Seq[ParticipantsPresence]] = {
+    eventDao.getParticipantsPresence(eventId)
+  }
 
   override def addParticipant(eventId: Long, userId: UUID): Future[Boolean] = {
     eventDao.addParticipant(eventId, userId).map { addedRowsCount =>

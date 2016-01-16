@@ -2,12 +2,30 @@ package service
 
 import java.util.UUID
 
+import forms.ParticipantsPresenceForm.ParticipantPresence
 import forms.{AddEventForm, ListFiltersForm}
-import models.{Event, EventWithParticipants}
+import models.{Event, EventWithParticipants, ParticipantsPresence}
 
 import scala.concurrent.Future
 
 trait EventService {
+
+  /**
+    * Saves participants presence report
+    *
+    * @param eventId event id
+    * @param participantsPresence list of participants presence
+    * @return number of saved presences
+    */
+  def savePresenceReport(eventId: Long, participantsPresence: List[ParticipantPresence]): Future[Int]
+
+  /**
+    * Gets participants presence object to fill
+    *
+    * @param eventId event id
+    * @return empty participants presence object
+    */
+  def getParticipantsPresence(eventId: Long): Future[Seq[ParticipantsPresence]]
 
   /**
     * Adds user with specified id to given event with id

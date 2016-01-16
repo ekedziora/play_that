@@ -4,7 +4,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 import forms.{AddEventForm, ListFiltersForm}
-import models.{Event, EventWithParticipants, Participant}
+import models.{Event, EventWithParticipants, Participant, ParticipantsPresence}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -14,6 +14,37 @@ import scala.concurrent.{Future, _}
 class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProvider) extends EventDao with DAOSlick {
 
   import driver.api._
+
+  override def updateEventPresenceReported(eventId: Long, presenceReported: Boolean): Future[Int] = {
+    val action = eventsQuery
+      .filter(_.id === eventId)
+      .map(_.presenceReported)
+      .update(presenceReported)
+
+    db.run(action)
+  }
+
+  override def updateParticipantsPresence(eventId: Long, usersIds: List[UUID], present: Boolean): Future[Int] = {
+    val action = eventParticipantsQuery
+      .filter(_.eventId === eventId)
+      .filter(_.userId inSet usersIds)
+      .map(_.present)
+      .update(Some(present))
+
+    db.run(action)
+  }
+
+  override def getParticipantsPresence(eventId: Long): Future[Seq[ParticipantsPresence]] = {
+    val query = eventParticipantsQuery.filter(_.eventId === eventId) join slickUsers on (_.userId === _.id)
+
+    db.run(query.result).map { tuples =>
+      tuples.map { tuple =>
+        val participant = tuple._1
+        val user = tuple._2
+        ParticipantsPresence(user.userID, user.username, user.getFullName, false)
+      }
+    }
+  }
 
   override def getNumberOfParticipants(eventId: Long): Future[Int] = {
     val query = eventParticipantsQuery.filter(_.eventId === eventId).length
@@ -124,7 +155,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
           new Participant(dbParticipant.id, dbUserParticipant.userID, dbUserParticipant.username, dbUserParticipant.getFullName)
         }
         new EventWithParticipants(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
-          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, participants)
+          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbEvent.presenceReported, participants)
       }
     }.getOrElse {
       throw utils.NotFoundException()

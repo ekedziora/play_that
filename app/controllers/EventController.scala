@@ -4,8 +4,8 @@ import authorization.AuthorizeEventByOwner
 import com.google.inject.Inject
 import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
-import forms.{AddEventForm, ListFiltersForm}
-import models.User
+import forms.{AddEventForm, ListFiltersForm, ParticipantsPresenceForm}
+import models.{User, Username}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import service.EventService
@@ -123,4 +123,29 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
       }
     }
   }
+
+  def showPresenceReportPage(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>
+    eventService.getParticipantsPresence(eventId).map { participantsPresence =>
+      val presenceList = participantsPresence.map { presence =>
+        ParticipantsPresenceForm.ParticipantPresence(presence.userId, presence.present)
+      }.toList
+
+      val userIdToNameMap = participantsPresence.map { presence =>
+        presence.userId -> Username(presence.fullName, presence.username)
+      }.toMap
+
+      val form = ParticipantsPresenceForm.form.fill(ParticipantsPresenceForm.Data(presenceList))
+      Ok(views.html.presenceReport(eventId, form, userIdToNameMap, request.identity))
+    }
+  }
+
+  def savePresenceReport(eventId: Long) = SecuredAction(AuthorizeEventByOwner(eventId, eventService)).async { implicit request =>
+    ParticipantsPresenceForm.form.bindFromRequest().fold(
+      formWithErrors => Future.successful(Redirect(routes.EventController.showPresenceReportPage(eventId))),
+      data => eventService.savePresenceReport(eventId, data.participantsPresence).map { updatedParticipantsCount =>
+        Redirect(routes.EventController.showEventDetails(eventId)).flashing(ViewUtils.InfoFlashKey -> Messages("presence.report.saved"))
+      }
+    )
+  }
+
 }

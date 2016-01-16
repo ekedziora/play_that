@@ -23,6 +23,7 @@ event.add.title = Add event
 event.details.title = Event details
 event.edit.title = Edit event
 event.delete.title = Delete event
+report.presence.title = Report presence
 sign.up.title = Play that - Sign Up
 sign.in.title = Play that - Sign In
 
@@ -81,6 +82,7 @@ search = Search
 empty.list = There are no items on list
 participants.empty = There are no participants
 participants.number.over.max = Provided max participants number is smaller then current participants count
+presence.report.info = Check which participant take part in event
 
 discipline.basketball = Basketball
 discipline.football = Football
@@ -96,6 +98,7 @@ event.deleted = Event deleted successfully
 event.not.joined = Joining event was unsuccessful
 event.not.unjoined = Unjoining event was unsuccessful
 account.details.updated = Account details updated successfully
+presence.report.saved = Presence report saved successfully
 change.password = Change password
 save = Save
 

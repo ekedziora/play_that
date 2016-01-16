@@ -3,11 +3,38 @@ package models.daos
 import java.util.UUID
 
 import forms.{AddEventForm, ListFiltersForm}
-import models.{Event, EventWithParticipants}
+import models.{Event, EventWithParticipants, ParticipantsPresence}
 
 import scala.concurrent.Future
 
 trait EventDao {
+
+  /**
+    * Updates event presence reported value
+    *
+    * @param eventId event id
+    * @param presenceReported if presence was reported
+    * @return number of updated events
+    */
+  def updateEventPresenceReported(eventId: Long, presenceReported: Boolean): Future[Int]
+
+  /**
+    * Updates presence of participants from specified event and with id included in list
+    *
+    * @param eventId event id
+    * @param usersIds list of users ids
+    * @param present if participant was present
+    * @return number of update participants
+    */
+  def updateParticipantsPresence(eventId: Long, usersIds: List[UUID], present: Boolean): Future[Int]
+
+  /**
+    * Gets participants presence object to fill
+    *
+    * @param eventId event id
+    * @return empty participants presence object
+    */
+  def getParticipantsPresence(eventId: Long): Future[Seq[ParticipantsPresence]]
 
   /**
     * Gets number of event participants

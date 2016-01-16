@@ -79,17 +79,20 @@
             </div>
             <hr class="col-md-12" />
             <div class="text-center">
-                @if(event.ownerId == user.userID) {
+                @if(event.ownerId == user.userID && !event.started) {
                     <a class="btn btn-info" role="button" href="@routes.EventController.showEditEventPage(event.id)">@Messages("event.edit.title")</a>
                     <a class="btn btn-info" role="button" data-toggle="modal" data-target="#deleteModal">@Messages("event.delete.title")</a>
                 }
-                @if(!event.isParticipant(user) && event.isNotFull) {
+                @if(event.ownerId == user.userID && event.started && !event.presenceReported) {
+                    <a class="btn btn-info" role="button" href="@routes.EventController.showPresenceReportPage(event.id)">@Messages("report.presence.title")</a>
+                }
+                @if(!event.isParticipant(user) && event.isNotFull && !event.started) {
                     @helper.form(routes.EventController.joinEvent(event.id), 'class -> "form-inline") {
                         @helper.CSRF.formField
                         <input type="submit" class="btn btn-info no-margin" value="@Messages("join")"/>
                     }
                 }
-                @if(event.isParticipant(user)) {
+                @if(event.isParticipant(user) && !event.started) {
                     @helper.form(routes.EventController.unjoinEvent(event.id), 'class -> "form-inline") {
                         @helper.CSRF.formField
                         <input type="submit" class="btn btn-info no-margin" value="@Messages("unjoin")"/>
