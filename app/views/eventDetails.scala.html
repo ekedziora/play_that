@@ -62,6 +62,9 @@
                     <ul class="list-group list-unstyled table-bordered">
                         @event.participants.map { participant =>
                             <li class="list-group-item">
+                                @if(event.presenceReported && participant.present.contains(true)) {
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                }
                                 @if(event.isOwner(user)) {
                                     @participant.fullName.getOrElse(participant.username)
                                 } else {

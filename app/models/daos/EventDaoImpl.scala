@@ -152,7 +152,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
         val participants = participantsSeq.map { participant =>
           val dbParticipant = participant._1
           val dbUserParticipant = participant._2
-          new Participant(dbParticipant.id, dbUserParticipant.userID, dbUserParticipant.username, dbUserParticipant.getFullName)
+          new Participant(dbParticipant.id, dbUserParticipant.userID, dbUserParticipant.username, dbUserParticipant.getFullName, dbParticipant.present)
         }
         new EventWithParticipants(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
           dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbEvent.presenceReported, participants)
