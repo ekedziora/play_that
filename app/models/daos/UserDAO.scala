@@ -72,4 +72,11 @@ trait UserDAO {
    * @return true if duplicated user was found, false otherwise
    */
   def findDuplicatedUsername(username: String, exceptUserId: Option[UUID]): Future[Boolean]
+
+  /**
+    * Finds all usernames in system
+    *
+    * @return sequence of all usernames
+    */
+  def getAllUsernames: Future[Seq[String]]
 }

@@ -8,7 +8,6 @@ import com.mohiva.play.silhouette.api.{Environment, EventBus}
 import com.mohiva.play.silhouette.impl.authenticators._
 import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.impl.providers._
-import com.mohiva.play.silhouette.impl.providers.oauth2._
 import com.mohiva.play.silhouette.impl.providers.oauth2.state.{CookieStateProvider, CookieStateSettings}
 import com.mohiva.play.silhouette.impl.repositories.DelegableAuthInfoRepository
 import com.mohiva.play.silhouette.impl.services._
@@ -22,6 +21,7 @@ import play.api.Configuration
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.WSClient
 import service._
+import provider.{CustomFacebookProvider, CustomGoogleProvider}
 import utils.{MailService, MailServiceImpl}
 
 /**
@@ -91,8 +91,8 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    */
   @Provides
   def provideSocialProviderRegistry(
-    facebookProvider: FacebookProvider,
-    googleProvider: GoogleProvider): SocialProviderRegistry = {
+    facebookProvider: CustomFacebookProvider,
+    googleProvider: CustomGoogleProvider): SocialProviderRegistry = {
 
     SocialProviderRegistry(Seq(
       googleProvider,
@@ -185,9 +185,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   def provideFacebookProvider(
     httpLayer: HTTPLayer,
     stateProvider: OAuth2StateProvider,
-    configuration: Configuration): FacebookProvider = {
+    configuration: Configuration): CustomFacebookProvider = {
 
-    new FacebookProvider(httpLayer, stateProvider, configuration.underlying.as[OAuth2Settings]("silhouette.facebook"))
+    new CustomFacebookProvider(httpLayer, stateProvider, configuration.underlying.as[OAuth2Settings]("silhouette.facebook"))
   }
 
   /**
@@ -202,8 +202,8 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   def provideGoogleProvider(
     httpLayer: HTTPLayer,
     stateProvider: OAuth2StateProvider,
-    configuration: Configuration): GoogleProvider = {
+    configuration: Configuration): CustomGoogleProvider = {
 
-    new GoogleProvider(httpLayer, stateProvider, configuration.underlying.as[OAuth2Settings]("silhouette.google"))
+    new CustomGoogleProvider(httpLayer, stateProvider, configuration.underlying.as[OAuth2Settings]("silhouette.google"))
   }
 }

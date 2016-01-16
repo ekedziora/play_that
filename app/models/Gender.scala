@@ -17,4 +17,8 @@ object Gender extends EnumOf[Gender] {
       throw new IllegalArgumentException(s"No gender value for database value $dbValue")
     }
   }
+
+  def fromProfile(value: String): Option[Gender] = {
+    Gender.values.find(_.name.toLowerCase == value)
+  }
 }

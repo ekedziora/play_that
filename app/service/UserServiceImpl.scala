@@ -6,15 +6,17 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.{PasswordHasher, PasswordInfo}
 import com.mohiva.play.silhouette.api.{AuthInfo, LoginInfo}
-import com.mohiva.play.silhouette.impl.providers.{CommonSocialProfile, CredentialsProvider}
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.AccountDetailsEditForm.Data
 import forms.ChangePasswordForm
-import models.User
 import models.daos.UserDAO
+import models.{Gender, User}
 import play.api.libs.concurrent.Execution.Implicits._
-import utils.ValidationException
+import provider.CustomSocialProfile
+import utils.{DateTimeUtils, ValidationException}
 
 import scala.concurrent.Future
+import scala.util.Random
 
 /**
  * Handles actions to users.
@@ -66,25 +68,43 @@ class UserServiceImpl @Inject() (userDAO: UserDAO, passwordHasher: PasswordHashe
     userDAO.save(user)
   }
 
-  override def saveOrUpdateUser(profile: CommonSocialProfile) = {
+  override def saveOrUpdateUser(profile: CustomSocialProfile): Future[(User, Boolean)] = {
     userDAO.find(profile.loginInfo).flatMap {
       case Some(user) => // Update user with profile
         userDAO.save(user.copy(
           firstName = profile.firstName,
           lastName = profile.lastName,
-          email = profile.email.getOrElse(throw new IllegalStateException("There's no email address in social profile")),
-          avatarURL = profile.avatarURL
-        ))
+          email = profile.email,
+          avatarURL = profile.avatarURL,
+          birthDate = profile.birthday.flatMap(DateTimeUtils.parseLocalDate),
+          gender = profile.gender.flatMap(Gender.fromProfile)
+        )).map(user => (user, false))
       case None => // Insert a new user
-        userDAO.save(User(
-          userID = UUID.randomUUID(),
-          loginInfo = profile.loginInfo,
-          username = "",
-          firstName = profile.firstName,
-          lastName = profile.lastName,
-          email = profile.email.getOrElse(throw new IllegalStateException("There's no email address in social profile")),
-          avatarURL = profile.avatarURL
-        ))
+        (for {
+          username <- createRandomUniqueUsername
+          user <- userDAO.save(User(
+            userID = UUID.randomUUID(),
+            loginInfo = profile.loginInfo,
+            username = username,
+            firstName = profile.firstName,
+            lastName = profile.lastName,
+            email = profile.email,
+            avatarURL = profile.avatarURL,
+            birthDate = profile.birthday.flatMap(DateTimeUtils.parseLocalDate),
+            gender = profile.gender.flatMap(Gender.fromProfile)
+          ))
+        } yield user)
+          .map { user => (user, true)}
+    }
+  }
+
+  override def createRandomUniqueUsername = {
+    userDAO.getAllUsernames.map { usernames =>
+        var randomString = ""
+        do {
+          randomString = Random.alphanumeric.take(10).mkString
+        } while (usernames.contains(randomString))
+        randomString
     }
   }
 }

@@ -111,6 +111,11 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
       }
   }
 
+  override def getAllUsernames: Future[Seq[String]] = {
+    val query = slickUsers.map(_.username)
+    db.run(query.result)
+  }
+
   def save(user: User) = {
     val dbUser = new DBUser(user)
     val dbLoginInfo = DBLoginInfo(None, user.loginInfo.providerID, user.loginInfo.providerKey)

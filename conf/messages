@@ -10,10 +10,12 @@ access.denied = Access denied
 user.exists = There already exists a user with this email
 username.exists = There already exists a user with this username
 could.not.authenticate = Could not authenticate with social provider. Please try again
+social.user.denied = User refused to allow access to account
 password.policy.error = Password must be at least 8 characters long, contain at least one uppercase character, one lowercase character and one number
 password.repeat.not.match = Provided passwords don''t match
 password.changed = Password was changed successfully
 password.incorrect = Provided password is incorrect
+change.random.username = Your username was randomly selected. To change it, please go to your account details
 
 home.title = Play that
 account.details.title = Account details
