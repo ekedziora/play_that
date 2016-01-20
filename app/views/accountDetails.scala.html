@@ -1,3 +1,4 @@
+@import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 @import utils.ViewUtils
 @import views.html.component.flashContainer
 @(user: models.User)(implicit request: RequestHeader, messages: Messages)
@@ -43,7 +44,9 @@
             <hr class="col-md-12" />
             <div class="row text-center">
                 <a class="btn btn-info" role="button" href="@routes.UserAccountController.editAccountDetails">@Messages("account.details.edit.title")</a>
-                <a class="btn btn-info" role="button" href="@routes.UserAccountController.changePassword">@Messages("change.password")</a>
+                @if(user.loginInfo.providerID == CredentialsProvider.ID) {
+                    <a class="btn btn-info" role="button" href="@routes.UserAccountController.changePassword">@Messages("change.password")</a>
+                }
             </div>
         </div>
     </div>

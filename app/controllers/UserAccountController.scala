@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
+import authorization.AuthorizeUserLoggedByCredentials
 import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
@@ -50,7 +51,7 @@ class UserAccountController @Inject() (
     Future.successful(Ok(views.html.changePassword(ChangePasswordForm.form, request.identity)))
   }
 
-  def changePassword = SecuredAction.async { implicit request =>
+  def changePassword = SecuredAction(AuthorizeUserLoggedByCredentials).async { implicit request =>
     ChangePasswordForm.form.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(views.html.changePassword(formWithErrors, request.identity))),
       data =>
