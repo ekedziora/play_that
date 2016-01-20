@@ -4,6 +4,11 @@
 @(event: models.EventWithParticipants, user: models.User)(implicit request: RequestHeader, messages: Messages)
 
 @main(Messages("event.details.title"), Some(user)) {
+    <div class="row">
+        <div class="col-md-2">
+            <a href="@routes.EventController.showList()"><span class="glyphicon glyphicon-backward"></span> @Messages("back.to.list")</a>
+        </div>
+    </div>
     <div class="user col-md-6 col-md-offset-3">
         <div class="modal fade" id="deleteModal" role="dialog">
             <div class="modal-dialog">
