@@ -127,15 +127,16 @@ trait DBTableDefinitions extends CustomTypes {
     def * = (id.?, accessToken, tokenType, expiresIn, refreshToken, loginInfoId) <> (DBOAuth2Info.tupled, DBOAuth2Info.unapply)
   }
 
-  case class DbSportDiscipline(id: Long, name: String, nameKey: String)
+  case class DbSportDiscipline(id: Long, name: String, nameKey: String, photoName: Option[String])
 
   class SportDisciplinesTable(tag: Tag) extends Table[DbSportDiscipline](tag, "sport_disciplines") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
     def nameKey = column[String]("name_key")
+    def photoName = column[Option[String]]("photo_name")
     def uniqueName = index("unique_name", name, unique = true)
     def uniqueNameKey = index("unique_name_key", nameKey, unique = true)
-    def * = (id, name, nameKey) <> (DbSportDiscipline.tupled, DbSportDiscipline.unapply)
+    def * = (id, name, nameKey, photoName) <> (DbSportDiscipline.tupled, DbSportDiscipline.unapply)
   }
 
   case class DbEvent(id: Long, title: String, description: Option[String], dateTime: LocalDateTime,

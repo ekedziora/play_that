@@ -39,7 +39,7 @@
 
         @events.map { event =>
             <a class="col-md-3 thumbnail deco-none" href="@routes.EventController.showEventDetails(event.id)">
-                <img src="@routes.Assets.at("/images/Basketball-Tryouts.jpg")" class="img-responsive">
+                <img src="@routes.Assets.at("/images/" + event.disciplinePhotoName.getOrElse("many_sports.jpg"))" class="img-responsive">
                 <div class="row text-center">
                     <h3>@event.title</h3>
                 </div>

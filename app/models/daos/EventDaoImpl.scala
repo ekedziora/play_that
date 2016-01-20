@@ -78,7 +78,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
         val dbUser = tuple._1._2
         val dbDiscipline = tuple._2
         new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
-          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey)
+          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName)
       }
     }
   }
@@ -100,7 +100,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
           val dbUser = tuple._1._2
           val dbDiscipline = tuple._2
           new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
-            dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey)
+            dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName)
         }.filter { event =>
           val fromCondition = filters.dateTimeFrom.map { from =>
             event.dateTime.isAfter(from)
@@ -133,7 +133,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
         val dbUser = tuple._1._2
         val dbDiscipline = tuple._2
         new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
-          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey)
+          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName)
       } getOrElse(throw utils.NotFoundException())
     }
   }

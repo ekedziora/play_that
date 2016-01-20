@@ -4,6 +4,7 @@
     "id" SERIAL NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "name_key" TEXT NOT NULL,
+    "photo_name" TEXT,
     CONSTRAINT "unique_name" UNIQUE (name),
     CONSTRAINT "unique_name_key" UNIQUE (name_key)
   );
