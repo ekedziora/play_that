@@ -22,7 +22,7 @@ GET         /event/:eventId                  controllers.EventController.showEve
 GET         /event/:eventId/edit             controllers.EventController.showEditEventPage(eventId: Long)
 POST        /event/:eventId/edit             controllers.EventController.updateEvent(eventId: Long)
 POST        /event/:eventId/delete           controllers.EventController.deleteEvent(eventId: Long)
-GET         /events                          controllers.EventController.showList
+GET         /events                          controllers.EventController.showList(cachedFilters: Boolean ?= false)
 POST        /event/:eventId/join             controllers.EventController.joinEvent(eventId: Long)
 POST        /event/:eventId/unjoin           controllers.EventController.unjoinEvent(eventId: Long)
 GET         /event/:eventId/presence         controllers.EventController.showPresenceReportPage(eventId: Long)

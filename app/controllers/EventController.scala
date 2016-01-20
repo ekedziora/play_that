@@ -6,14 +6,17 @@ import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import forms.{AddEventForm, ListFiltersForm, ParticipantsPresenceForm}
 import models.{User, Username}
+import play.api.cache.CacheApi
+import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import service.EventService
-import utils.{ControllerUtils, NotFoundException, ValidationException, ViewUtils}
+import utils._
 
 import scala.concurrent.Future
 
-class EventController @Inject() (val messagesApi: MessagesApi, val env: Environment[User, CookieAuthenticator], val eventService: EventService)
+class EventController @Inject() (val messagesApi: MessagesApi, val env: Environment[User, CookieAuthenticator],
+                                 val eventService: EventService, val cache: CacheApi)
   extends Silhouette[User, CookieAuthenticator] {
 
   def showAddEventPage = SecuredAction.async { implicit request =>
@@ -81,8 +84,15 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
     )
   }
 
-  def showList = SecuredAction.async { implicit request =>
-    ListFiltersForm.form.bindFromRequest.fold (
+  def showList(cachedFilters: Boolean) = SecuredAction.async { implicit request =>
+    var form = ListFiltersForm.form.bindFromRequest
+    if (cachedFilters) {
+      cache.get[Form[ListFiltersForm.Data]](CacheUtils.EventListFiltersKey).foreach(form = _)
+    } else {
+      cache.set(CacheUtils.EventListFiltersKey, form)
+    }
+
+    form.fold (
       formWithErrors => {
         eventService.getDisciplineOptionsForFilter.map { optionsSeq =>
           BadRequest(views.html.eventsList(Seq(), formWithErrors, optionsSeq, request.identity))
