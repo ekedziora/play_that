@@ -91,7 +91,7 @@
                     <a class="btn btn-info" role="button" href="@routes.EventController.showEditEventPage(event.id)">@Messages("event.edit.title")</a>
                     <a class="btn btn-info" role="button" data-toggle="modal" data-target="#deleteModal">@Messages("event.delete.title")</a>
                 }
-                @if(event.ownerId == user.userID && event.started && !event.presenceReported) {
+                @if(event.ownerId == user.userID && event.started && !event.presenceReported && event.participantsCount > 0) {
                     <a class="btn btn-info" role="button" href="@routes.EventController.showPresenceReportPage(event.id)">@Messages("report.presence.title")</a>
                 }
                 @if(!event.isParticipant(user) && event.isNotFull && !event.started) {
