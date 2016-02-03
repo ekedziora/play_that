@@ -17,4 +17,4 @@ dist
 /.cache-main
 /.cache-tests
 activator*
-scripts
+/scripts
