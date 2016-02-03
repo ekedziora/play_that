@@ -140,7 +140,8 @@ trait DBTableDefinitions extends CustomTypes {
   }
 
   case class DbEvent(id: Long, title: String, description: Option[String], dateTime: LocalDateTime,
-                     maxParticipants: Option[Int], ownerId:UUID, disciplineId: Long, presenceReported: Boolean)
+                     maxParticipants: Option[Int], ownerId:UUID, disciplineId: Long, presenceReported: Boolean,
+                     lat: BigDecimal, lng: BigDecimal)
 
   class EventsTable(tag: Tag) extends Table[DbEvent](tag, "events") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
@@ -153,7 +154,9 @@ trait DBTableDefinitions extends CustomTypes {
     def ownerFk = foreignKey("fk_event_owner", ownerId, slickUsers)(_.id)
     def disciplineFk = foreignKey("fk_event_discipline", disciplineId, sportDisciplinesQuery)(_.id)
     def presenceReported = column[Boolean]("presence_reported")
-    def * = (id, title, description, dateTime, maxParticipants, ownerId, disciplineId, presenceReported) <> (DbEvent.tupled, DbEvent.unapply)
+    def lat = column[BigDecimal]("lat")
+    def lng = column[BigDecimal]("lng")
+    def * = (id, title, description, dateTime, maxParticipants, ownerId, disciplineId, presenceReported, lat, lng) <> (DbEvent.tupled, DbEvent.unapply)
     def participants = eventParticipantsQuery.filter(_.eventId === id).flatMap(_.userFk)
     def eventParticipants = eventParticipantsQuery.filter(_.eventId === id)
   }

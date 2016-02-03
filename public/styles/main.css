@@ -114,3 +114,12 @@ form.form-inline {
 .no-margin {
     margin: 0;
 }
+
+#mapModal {
+    width: 100%;
+}
+
+#map {
+    height: 600px;
+    width: 100%;
+}

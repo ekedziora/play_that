@@ -74,6 +74,7 @@ date.time.format = YYYY-MM-DD HH:MM
 
 yes = Yes
 no = No
+ok = OK
 join = Join
 unjoin = Unjoin
 from = From
@@ -86,6 +87,8 @@ participants.empty = There are no participants
 participants.number.over.max = Provided max participants number is smaller then current participants count
 presence.report.info = Check which participant take part in event
 back.to.list = Back to list
+show.map = Show map
+address = Address
 
 discipline.basketball = Basketball
 discipline.football = Football

@@ -16,13 +16,17 @@ object AddEventForm {
       "description" -> optional(text),
       "dateTime" -> of(LocalDateTimeMapping).verifying(FutureLocalDateTime),
       "maxParticipants" -> optional(number(min = 1)),
-      "disciplineId" -> longNumber
+      "disciplineId" -> longNumber,
+      "address" -> nonEmptyText,
+      "lat" -> bigDecimal,
+      "lng" -> bigDecimal
     )(Data.apply)(Data.unapply)
   )
 
-  case class Data(title: String, description: Option[String], dateTime: LocalDateTime, maxParticipants: Option[Int], disciplineId: Long) {
+  case class Data(title: String, description: Option[String], dateTime: LocalDateTime, maxParticipants: Option[Int], disciplineId: Long,
+                 address: String, lat: BigDecimal, lng: BigDecimal) {
     def this(event: Event) {
-      this(event.title, event.description, event.dateTime, event.maxParticipants, event.disciplineId)
+      this(event.title, event.description, event.dateTime, event.maxParticipants, event.disciplineId, "", event.lat, event.lng)
     }
   }
 

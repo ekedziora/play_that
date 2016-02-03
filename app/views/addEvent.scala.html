@@ -5,6 +5,8 @@
 
 @main(Messages("event.add.title"), Some(user)) {
     <script type="text/javascript" src="@routes.Assets.at("scripts/dateTimePicker.js")"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3_x20lhjKIv-yUmN37MhRING6u-_Cpvw&callback=initMap&libraries=places"></script>
+    <script type="text/javascript" src="@routes.Assets.at("scripts/map.js")"></script>
     <div class="user col-md-6 col-md-offset-3">
         <div class="row">
             <hr class="col-md-12" />
@@ -22,9 +24,26 @@
                     @b3.number(addEventForm("maxParticipants"), '_label -> Messages("max.participants"))
                     @b3.select(addEventForm("disciplineId"), disciplineOptions.map {case (id, nameKey) => (id, Messages(nameKey))},
                         '_label -> Messages("discipline"), '_class -> "required", 'required -> disciplineOptions.nonEmpty)
+                    @b3.hidden("lng", addEventForm("lng").value, 'id -> "lng")
+                    @b3.hidden("lat", addEventForm("lat").value, 'id -> "lat")
+                    @b3.text(addEventForm("address"), '_label -> Messages("address"), '_class -> "required", 'id -> "addressAutocomplete")
+                    <a role="link" data-toggle="modal" data-target="#mapModal">@Messages("show.map")</a>
                     @b3.submit('class -> "btn btn-lg btn-primary btn-block"){ @Messages("save") }
                 }
             </div>
+        </div>
+    </div>
+    <div class="modal fade" id="mapModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="map"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-block" data-dismiss="modal">@Messages("ok")</button>
+                </div>
+            </div>
+
         </div>
     </div>
 }

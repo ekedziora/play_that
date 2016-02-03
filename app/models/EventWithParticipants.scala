@@ -5,7 +5,8 @@ import java.util.UUID
 
 case class EventWithParticipants(id: Long, title: String, description: Option[String], dateTime: LocalDateTime,
                                  maxParticipants: Option[Int], ownerId: UUID, ownerUsername: String, ownerFullName: Option[String],
-                                 disciplineId: Long, disciplineNameKey: String, presenceReported: Boolean, participants: Seq[Participant]) {
+                                 disciplineId: Long, disciplineNameKey: String, presenceReported: Boolean, lat: BigDecimal,
+                                 lng: BigDecimal, participants: Seq[Participant]) {
 
   private val participantsIds = participants.map(_.userId)
 

@@ -78,7 +78,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
         val dbUser = tuple._1._2
         val dbDiscipline = tuple._2
         new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
-          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName)
+          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName, dbEvent.lat, dbEvent.lng)
       }
     }
   }
@@ -100,7 +100,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
           val dbUser = tuple._1._2
           val dbDiscipline = tuple._2
           new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
-            dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName)
+            dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName, dbEvent.lat, dbEvent.lng)
         }.filter { event =>
           val fromCondition = filters.dateTimeFrom.map { from =>
             event.dateTime.isAfter(from)
@@ -118,9 +118,10 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
 
   override def insertNewEvent(newEventData: AddEventForm.Data, ownerId: UUID): Future[Long] = {
     val insertAction = eventsQuery.map { event =>
-      (event.title, event.description, event.dateTime, event.maxParticipants, event.ownerId, event.disciplineId)
+      (event.title, event.description, event.dateTime, event.maxParticipants, event.ownerId, event.disciplineId, event.lat, event.lng)
     } returning eventsQuery.map(_.id) +=
-     ((newEventData.title, newEventData.description, newEventData.dateTime, newEventData.maxParticipants, ownerId, newEventData.disciplineId))
+     ((newEventData.title, newEventData.description, newEventData.dateTime, newEventData.maxParticipants, ownerId,
+       newEventData.disciplineId, newEventData.lat, newEventData.lng))
 
     db.run(insertAction)
   }
@@ -133,7 +134,7 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
         val dbUser = tuple._1._2
         val dbDiscipline = tuple._2
         new Event(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
-          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName)
+          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbDiscipline.photoName, dbEvent.lat, dbEvent.lng)
       } getOrElse(throw utils.NotFoundException())
     }
   }
@@ -155,7 +156,8 @@ class EventDaoImpl @Inject() (protected val dbConfigProvider: DatabaseConfigProv
           new Participant(dbParticipant.id, dbUserParticipant.userID, dbUserParticipant.username, dbUserParticipant.getFullName, dbParticipant.present)
         }
         new EventWithParticipants(dbEvent.id, dbEvent.title, dbEvent.description, dbEvent.dateTime, dbEvent.maxParticipants, dbUser.userID,
-          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbEvent.presenceReported, participants)
+          dbUser.username, dbUser.getFullName, dbDiscipline.id, dbDiscipline.nameKey, dbEvent.presenceReported, dbEvent.lat, dbEvent.lng,
+          participants)
       }
     }.getOrElse {
       throw utils.NotFoundException()
