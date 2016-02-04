@@ -26,8 +26,16 @@
                         '_label -> Messages("discipline"), '_class -> "required", 'required -> disciplineOptions.nonEmpty)
                     @b3.hidden("lng", addEventForm("lng").value, 'id -> "lng")
                     @b3.hidden("lat", addEventForm("lat").value, 'id -> "lat")
-                    @b3.text(addEventForm("address"), '_label -> Messages("address"), '_class -> "required", 'id -> "addressAutocomplete")
-                    <a role="link" data-toggle="modal" data-target="#mapModal">@Messages("show.map")</a>
+                    @b3.inputWrapped("text", addEventForm("address"), '_label -> Messages("address"), '_class -> "required", 'id -> "addressAutocomplete") { input =>
+                        <div class="input-group">
+                            @input
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#mapModal">
+                                    <span class="glyphicon glyphicon-map-marker"></span>
+                                </button>
+                            </div>
+                        </div>
+                    }
                     @b3.submit('class -> "btn btn-lg btn-primary btn-block"){ @Messages("save") }
                 }
             </div>

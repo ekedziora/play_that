@@ -87,7 +87,6 @@ participants.empty = There are no participants
 participants.number.over.max = Provided max participants number is smaller then current participants count
 presence.report.info = Check which participant take part in event
 back.to.list = Back to list
-show.map = Show map
 address = Address
 
 discipline.basketball = Basketball
@@ -107,6 +106,8 @@ account.details.updated = Account details updated successfully
 presence.report.saved = Presence report saved successfully
 change.password = Change password
 save = Save
+
+string.not.represents.address = Provided string is not a valid address
 
 remember.me = Remember my login on this computer
 or.use.social = Or use your existing account on one of the following services to sign in:

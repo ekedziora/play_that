@@ -28,8 +28,12 @@ class EventController @Inject() (val messagesApi: MessagesApi, val env: Environm
   def saveNewEvent = SecuredAction.async { implicit request =>
     AddEventForm.form.bindFromRequest.fold(
       formWithErrors => {
+        var form = formWithErrors
+        if (formWithErrors.error("lat").isDefined || formWithErrors.error("lng").isDefined) {
+          form = formWithErrors.withError("address", Messages("string.not.represents.address"))
+        }
         eventService.getDisciplineOptions.map { optionsSeq =>
-          BadRequest(views.html.addEvent(formWithErrors, optionsSeq, request.identity))
+          BadRequest(views.html.addEvent(form, optionsSeq, request.identity))
         }
       },
       data => {

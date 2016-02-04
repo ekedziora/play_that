@@ -31,6 +31,33 @@ function initMap() {
         anchorPoint: new google.maps.Point(0, -30)
     });
 
+    google.maps.event.addListener(map, 'click', function(event) {
+        marker.setPosition(event.latLng);
+
+        var url = 'http://maps.googleapis.com/maps/api/geocode/json';
+        var latlng = {latlng: event.latLng.lat() + ',' + event.latLng.lng()};
+
+        $.getJSON(url, latlng, function(data) {
+            if (data.results.length > 0) {
+                var foundAddress = data.results[0].formatted_address;
+                $('#addressAutocomplete').val(foundAddress);
+                $('#lat').val(event.latLng.lat());
+                $('#lng').val(event.latLng.lng());
+                infowindow.setContent(foundAddress);
+                infowindow.open(map, marker);
+            } else {
+                $('#addressAutocomplete').val(null);
+                $('#lat').val(null);
+                $('#lng').val(null);
+                infowindow.setContent(null);
+            }
+        });
+    });
+
+    google.maps.event.addListener(marker, 'click', function() {
+        infowindow.open(map, marker);
+    });
+
     var place;
 
     autocomplete.addListener('place_changed', function () {
