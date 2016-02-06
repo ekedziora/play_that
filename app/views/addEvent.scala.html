@@ -1,4 +1,4 @@
-@import views.html.component.formGlobalErrorContainer
+@import views.html.component.{addressInput, formGlobalErrorContainer}
 @(addEventForm: Form[forms.AddEventForm.Data], disciplineOptions: Seq[(String, String)], user: models.User)(implicit request: RequestHeader, messages: Messages)
 
 @import b3.vertical.fieldConstructor
@@ -26,16 +26,7 @@
                         '_label -> Messages("discipline"), '_class -> "required", 'required -> disciplineOptions.nonEmpty)
                     @b3.hidden("lng", addEventForm("lng").value, 'id -> "lng")
                     @b3.hidden("lat", addEventForm("lat").value, 'id -> "lat")
-                    @b3.inputWrapped("text", addEventForm("address"), '_label -> Messages("address"), '_class -> "required", 'id -> "addressAutocomplete") { input =>
-                        <div class="input-group">
-                            @input
-                            <div class="input-group-btn">
-                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#mapModal">
-                                    <span class="glyphicon glyphicon-map-marker"></span>
-                                </button>
-                            </div>
-                        </div>
-                    }
+                    @addressInput(addEventForm("address"), "mapModal", '_label -> Messages("address"), '_class -> "required", 'id -> "addressAutocomplete")
                     @b3.submit('class -> "btn btn-lg btn-primary btn-block"){ @Messages("save") }
                 }
             </div>

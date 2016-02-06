@@ -1,0 +1,12 @@
+@(field: Field, mapModalName: String, args: (Symbol,Any)*)(implicit handler: b3.B3FieldConstructor, messages: Messages)
+
+@b3.inputWrapped("text", field, args:_*) { input =>
+    <div class="input-group">
+        @input
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="@{s"#$mapModalName"}">
+                <span class="glyphicon glyphicon-map-marker"></span>
+            </button>
+        </div>
+    </div>
+}
